@@ -5,52 +5,9 @@ Date:
 """
 
 # Define location
-locations = {
-    "residence_dining_center": {
-        "description": "You are in the RDC. You hear a loud noise. turning your head you see what you can only describe as zombies attacking others.\nYou run to the exit, you stop at the doors you can choose to hide or go out?",
-        "exits": {"out": "rdc_hallway", },
-        "items": [],
-        "item_desc": "",
-        "hide": "a zombie bites you!",
-        "hide_result": "die",
-    },
-    "rdc_hallway": {
-        "description": "You're heart racing you must choose go left towards the dorms or go right towards kirby student center",
-        "exits": {"left": "griggs_hall", "right": "kirby_student_center_floor_3", },
-        "items": ["backpack"],
-        "item_desc": "On the ground you see a",
-        "hide": "You hide in the bathrooms for 5 mins",
-        "hide_result": "nothing",
-
-    },
-    "griggs_hall": {
-        "description": "You entered griggs hall.",
-        "exits": {"back": "rdc_hallway"},
-        "items": [],
-        "item_desc": "",
-        "hide": "Nowhere to hide",
-        "hide_result": "nothing",
-    },
-    "kirby_student_center_floor_3": {
-        "description": "You entered kirby student center floor 3.",
-        "exits": {"back": "rdc_hallway", "down": "kirby_student_center_floor_2", },
-        "items": [],
-        "item_desc": "",
-        "hide": "Nowhere to hide",
-        "hide_result": "nothing",
-    },
-    "kirby_student_center_floor_2": {
-        "description": "You entered kirby student center floor 2.",
-        "exits": {"up": "kirby_student_center_floor_3", },
-        "items": [],
-        "item_desc": "",
-        "hide": "Nowhere to hide",
-        "hide_result": "nothing",
-    }
-}
-
+locations = "none"
 # Player's current location and inventory
-current_location = "residence_dining_center"
+current_location = "none"
 inventory = []
 health = 100
 
@@ -179,5 +136,6 @@ def main_menu():
             print("Invalid choice. Please enter a number between 1 and 3.")
 
 
-#Displays Menu
+#Starts everything
+reset_game()
 main_menu()
