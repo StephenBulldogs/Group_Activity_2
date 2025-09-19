@@ -52,10 +52,11 @@ locations = {
 # Player's current location and inventory
 current_location = "residence_dining_center"
 inventory = []
-
+health = 100
 
 def reset_game():
-    global locations, current_location, inventory
+    global health, locations, current_location, inventory
+    health = 100
     locations = {
         "residence_dining_center": {
             "description": "You are in the RDC. You hear a loud noise. turning your head you see what you can only describe as zombies attacking others.\nYou run to the exit, you stop at the doors you can choose to hide or go out?",
@@ -139,6 +140,7 @@ def handle_command(command):
         print("Invalid command.")
 
 def main_menu():
+    global health
     while True:
         display_menu()
         choice = input("Enter your choice (1-3): ")
@@ -146,7 +148,6 @@ def main_menu():
         if choice == '1':
             display_rules()
         elif choice == '2':
-            health = 100
             # Game loop2
             while True:
                 print(f"Current Health: {health}")
