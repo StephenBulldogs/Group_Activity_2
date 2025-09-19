@@ -41,7 +41,7 @@ locations = {
     },
     "kirby_student_center_floor_2": {
         "description": "You entered kirby student center floor 2.",
-        "exits": {"up": "kirby_student_center_floor_1", },
+        "exits": {"up": "kirby_student_center_floor_3", },
         "items": [],
         "item_desc": "",
         "hide": "Nowhere to hide",
@@ -93,7 +93,7 @@ def reset_game():
         },
         "kirby_student_center_floor_2": {
             "description": "You entered kirby student center floor 2.",
-            "exits": {"up": "kirby_student_center_floor_1", },
+            "exits": {"up": "kirby_student_center_floor_3", },
             "items": [],
             "item_desc": "",
             "hide": "Nowhere to hide",
