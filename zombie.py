@@ -89,8 +89,16 @@ def display_menu():
     print("2. Play Game")
     print("3. Exit")
 
+def display_time():
+    global current_time
+    print(f"You look at your phone, its currently {current_time}")
+
+def display_health():
+    global health
+    print(f"Your current health: {BLUE}{health}{NORMAL}")
+
 def display_rules():
-    print("Commands: Go, Take, Inventory, Use, Attack, Hide, Menu")
+    print("Commands: Go, Take, Inventory, Use, Attack, Hide, Time, Health, Menu")
 
 def display_location():
     print(locations[current_location]["description"])
@@ -102,7 +110,7 @@ def handle_command(command):
     parts = command.lower().split()
     verb = parts[0]
     noun = " ".join(parts[1:]) if len(parts) > 1 else ""
-    
+
     if verb == "go":
         if noun in locations[current_location]["exits"]:
             if locations[current_location]["safe"] == False:
@@ -133,6 +141,10 @@ def handle_command(command):
             print("Your inventory:", ", ".join(inventory))
         else:
             print("Your inventory is empty.")
+    elif verb == "time":
+        display_time()
+    elif verb == "health":
+        display_health()
     else:
         print("Invalid command.")
 
@@ -145,8 +157,6 @@ def main_menu():
             display_rules()
         elif choice == '2':
             while True:
-                print(f"Current Health: {health}")
-                print(f"Time: {current_time}")
                 display_location()
                 command = input("> ").strip()
                 if command == "menu":
