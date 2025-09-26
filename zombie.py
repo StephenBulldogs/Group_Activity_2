@@ -25,11 +25,15 @@ command_list = ["out","take","drop","use","left","right","up","down","in","back"
 items = {
     "backpack":{
         "description": "you see a backpack on the ground.",
-        "examine": "Its empty, might still have a use.",
+        "examine": "It has a army logo on it, you find keys inside",
     },
     "knife":{
         "description": "you see a knife.",
         "examine": "A sharp knife, it could be useful.",
+    },
+    "gun":{
+        "description": "It's a gun!",
+        "examine": "It is a gun, I hope you know how to use it!",
     },
 }
 
@@ -177,6 +181,8 @@ def fight():
                 print("use fists")
                 if "knife" in inventory:
                     print("use knife")
+                if "gun" in inventory:
+                    print("use gun")
 
                 fight = input("> ").lower()
                 if fight == "use fists":
@@ -193,11 +199,24 @@ def fight():
                     else:
                         locations[current_location]["zombie"].remove(zombie_name)
                         print(f"You defeated the zombie")
-
                 elif fight == "use knife":
                     add_time(30)
                     zombie_health -= 40
                     print(f"You hit the zombie for {BLUE}40 Damage{NORMAL}")
+                    if zombie_health > 0:
+                        health -= damage
+                        print(f"The zombie scratched you doing {RED}{damage} Damage{NORMAL}")
+                        if health <= 0:
+                            print(f"{RED}You Died, GAME OVER{NORMAL}")
+                            reset_game()
+                            main_menu()
+                    else:
+                        locations[current_location]["zombie"].remove(zombie_name)
+                        print(f"You defeated the zombie")
+                elif fight == "use gun":
+                    add_time(30)
+                    zombie_health -= 200
+                    print(f"You hit the zombie for {BLUE}200 Damage{NORMAL}")
                     if zombie_health > 0:
                         health -= damage
                         print(f"The zombie scratched you doing {RED}{damage} Damage{NORMAL}")
