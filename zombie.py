@@ -26,14 +26,17 @@ items = {
     "backpack":{
         "description": "you see a backpack on the ground.",
         "examine": "It has a army logo on it, you find keys inside",
+        "damage": 0
     },
     "knife":{
         "description": "you see a knife.",
         "examine": "A sharp knife, it could be useful.",
+        "damage": 40
     },
     "gun":{
         "description": "It's a gun!",
         "examine": "It is a gun, I hope you know how to use it!",
+        "damage": 200
     },
 }
 
@@ -179,13 +182,12 @@ def fight():
             print(f"Zombie Health: {BLUE}{zombie_health}{NORMAL}")
             while zombie_health > 0:
                 print("use fists")
-                if "knife" in inventory:
-                    print("use knife")
-                if "gun" in inventory:
-                    print("use gun")
+                for item_name in inventory:
+                    print(f"use {item_name}")
 
-                fight = input("> ").lower()
-                if fight == "use fists":
+                fight = input("> ").lower().split()
+                item = " ".join(fight[1:]) if len(fight) > 1 else ""
+                if item == "fists":
                     add_time(30)
                     zombie_health -= 20
                     print(f"You hit the zombie for {BLUE}20 Damage{NORMAL}")
@@ -199,10 +201,10 @@ def fight():
                     else:
                         locations[current_location]["zombie"].remove(zombie_name)
                         print(f"You defeated the zombie")
-                elif fight == "use knife":
+                elif item in inventory:
                     add_time(30)
-                    zombie_health -= 40
-                    print(f"You hit the zombie for {BLUE}40 Damage{NORMAL}")
+                    zombie_health -= items[item]["damage"]
+                    print(f"You hit the zombie for {BLUE}{items[item]["damage"]} Damage{NORMAL}")
                     if zombie_health > 0:
                         health -= damage
                         print(f"The zombie scratched you doing {RED}{damage} Damage{NORMAL}")
@@ -213,20 +215,7 @@ def fight():
                     else:
                         locations[current_location]["zombie"].remove(zombie_name)
                         print(f"You defeated the zombie")
-                elif fight == "use gun":
-                    add_time(30)
-                    zombie_health -= 200
-                    print(f"You hit the zombie for {BLUE}200 Damage{NORMAL}")
-                    if zombie_health > 0:
-                        health -= damage
-                        print(f"The zombie scratched you doing {RED}{damage} Damage{NORMAL}")
-                        if health <= 0:
-                            print(f"{RED}You Died, GAME OVER{NORMAL}")
-                            reset_game()
-                            main_menu()
-                    else:
-                        locations[current_location]["zombie"].remove(zombie_name)
-                        print(f"You defeated the zombie")
+
                 else:
                     print("Invalid command.")
 
