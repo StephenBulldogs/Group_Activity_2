@@ -23,10 +23,12 @@ target_time = datetime.datetime.combine(today, datetime.time(17, 30))
 command_list = ["out","take","drop","use","left","right","up","down","in","back","turn","examine","fight","defend","run","read"]
 items = {
     "backpack":{
-        "description": "you see a backpack on the ground."
+        "description": "you see a backpack on the ground.",
+        "examine": "Its empty, might still have a use.",
     },
     "knife":{
-        "description": "you see a knife."
+        "description": "you see a knife.",
+        "examine": "A sharp knife, it could be useful.",
     },
 }
 
@@ -102,7 +104,7 @@ def display_health():
     print(f"Your current health: {BLUE}{health}{NORMAL}")
 
 def display_rules():
-    print("Commands: Go, Take, Inventory, Drop, Hide, Time, Health, Menu")
+    print("Commands: Go, Take, Inventory, Drop, Hide, Time, Health, Examine, Menu")
     print("This game uses a Verb/Noun command system: go out, take knife, etc")
     print("You have 30 minutes to get to safety. Changing locations, and hiding take time so be careful not to take to long.")
 
@@ -140,6 +142,11 @@ def handle_command(command):
             inventory.remove(noun)
             locations[current_location]["items"].append(noun)
             print(f"You dropped the {noun}.")
+        else:
+            print(f"You do not have a {noun}.")
+    elif verb == "examine":
+        if noun in inventory:
+            print(f"{items[noun]["examine"]}")
         else:
             print(f"You do not have a {noun}.")
     else:
