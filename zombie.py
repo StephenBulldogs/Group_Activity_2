@@ -44,7 +44,7 @@ zombies = {
     },
     "boss":{
         "description": "there is a giant zombie blocking your path!",
-        "health": 200
+        "health": 2000
     },
 }
 
@@ -83,7 +83,7 @@ def reset_game():
             "hide_result": 0,
             "safe": True,
             "map": "griggs.png",
-            "zombie": []
+            "zombie": ["boss"]
         },
         "kirby_student_center_floor_3": {
             "description": "You entered kirby student center floor 3.",
@@ -180,6 +180,10 @@ def fight():
                     if zombie_health > 0:
                         health -= 20
                         print(f"The zombie scratched you doing {RED}20 Damage{NORMAL}")
+                        if health <= 0:
+                            print(f"{RED}You Died, GAME OVER{NORMAL}")
+                            reset_game()
+                            main_menu()
                     else:
                         locations[current_location]["zombie"].remove(zombie_name)
                         print(f"You defeated the zombie")
@@ -190,6 +194,10 @@ def fight():
                     if zombie_health > 0:
                         health -= 20
                         print(f"The zombie scratched you doing {RED}20 Damage{NORMAL}")
+                        if health <= 0:
+                            print(f"{RED}You Died, GAME OVER{NORMAL}")
+                            reset_game()
+                            main_menu()
                     else:
                         locations[current_location]["zombie"].remove(zombie_name)
                         print(f"You defeated the zombie")
