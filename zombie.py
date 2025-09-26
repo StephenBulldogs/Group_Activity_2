@@ -36,15 +36,18 @@ items = {
 zombies = {
     "normal":{
         "description": "there is a zombie blocking your path!",
-        "health": 40
+        "health": 40,
+        "strength": 20
     },
     "heavy":{
         "description": "there is a big zombie blocking your path!",
-        "health": 80
+        "health": 80,
+        "strength": 40
     },
     "boss":{
         "description": "there is a giant zombie blocking your path!",
-        "health": 2000
+        "health": 200,
+        "strength": 60
     },
 }
 
@@ -167,6 +170,7 @@ def fight():
         zombies_in_location = locations[current_location]["zombie"]
         for zombie_name in zombies_in_location:
             zombie_health=zombies[zombie_name]["health"]
+            damage=zombies[zombie_name]["strength"]
             print(f"Zombie Health: {BLUE}{zombie_health}{NORMAL}")
             while zombie_health > 0:
                 print("use fists")
@@ -178,8 +182,8 @@ def fight():
                     zombie_health -= 20
                     print(f"You hit the zombie for {BLUE}20 Damage{NORMAL}")
                     if zombie_health > 0:
-                        health -= 20
-                        print(f"The zombie scratched you doing {RED}20 Damage{NORMAL}")
+                        health -= damage
+                        print(f"The zombie scratched you doing {RED}{damage} Damage{NORMAL}")
                         if health <= 0:
                             print(f"{RED}You Died, GAME OVER{NORMAL}")
                             reset_game()
@@ -192,8 +196,8 @@ def fight():
                     zombie_health -= 40
                     print(f"You hit the zombie for {BLUE}40 Damage{NORMAL}")
                     if zombie_health > 0:
-                        health -= 20
-                        print(f"The zombie scratched you doing {RED}20 Damage{NORMAL}")
+                        health -= damage
+                        print(f"The zombie scratched you doing {RED}{damage} Damage{NORMAL}")
                         if health <= 0:
                             print(f"{RED}You Died, GAME OVER{NORMAL}")
                             reset_game()
