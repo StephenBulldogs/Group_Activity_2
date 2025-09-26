@@ -5,6 +5,8 @@ Date:
 """
 
 import datetime
+import cv2
+
 
 BOLD = "\033[1m"
 NORMAL = "\033[0m"
@@ -44,6 +46,7 @@ def reset_game():
             "hide_result": "damage",
             "safe": True,
             "damage": 20,
+            "map": "rdc.png",
         },
         "rdc_hallway": {
             "description": "You're heart racing you must choose go left towards the dorms or go right towards kirby student center",
@@ -54,6 +57,7 @@ def reset_game():
             "safe": False,
             "safe_result": "As you attempt to leave a zombie scratches you",
             "damage": 20,
+            "map": "rdc_hallway.png",
         },
         "griggs_hall": {
             "description": "You entered griggs hall. You think you hear a noise",
@@ -62,6 +66,7 @@ def reset_game():
             "hide": "Nowhere to hide",
             "hide_result": 0,
             "safe": True,
+            "map": "griggs.png",
         },
         "kirby_student_center_floor_3": {
             "description": "You entered kirby student center floor 3.",
@@ -70,6 +75,7 @@ def reset_game():
             "hide": "Nowhere to hide",
             "hide_result": 0,
             "safe": True,
+            "map": "ksc.png",
         },
         "kirby_student_center_floor_2": {
             "description": "You entered kirby student center floor 2.",
@@ -78,6 +84,7 @@ def reset_game():
             "hide": "Nowhere to hide",
             "hide_result": 0,
             "safe": True,
+            "map": "ksc.png",
         }
     }
     current_location = "residence_dining_center"
@@ -88,6 +95,19 @@ def reset_game():
 def add_time(time):
     global current_time
     current_time += datetime.timedelta(seconds=time)
+
+def open_map():
+    # Load the image
+    image = cv2.imread(locations[current_location]["map"])
+
+    # Display the image in a window
+    cv2.imshow('Current Location', image)
+
+    # Wait for a key press (0 means indefinitely, or specify milliseconds)
+    cv2.waitKey(0)
+
+    # Close all OpenCV windows
+    cv2.destroyAllWindows()
 
 def display_menu():
     print("\n--- Main Menu ---")
@@ -104,7 +124,7 @@ def display_health():
     print(f"Your current health: {BLUE}{health}{NORMAL}")
 
 def display_rules():
-    print("Commands: Go, Take, Inventory, Drop, Hide, Time, Health, Examine, Menu")
+    print("Commands: Go, Take, Inventory, Drop, Hide, Time, Health, Examine, Menu, Map")
     print("This game uses a Verb/Noun command system: go out, take knife, etc")
     print("You have 30 minutes to get to safety. Changing locations, and hiding take time so be careful not to take to long.")
 
@@ -119,7 +139,7 @@ def handle_command(command):
     global current_location, inventory, current_time, health
     parts = command.lower().split()
     verb = parts[0]
-    noun = parts[1]
+    noun = " ".join(parts[1:]) if len(parts) > 1 else ""
 
     if verb == "go":
         if noun in locations[current_location]["exits"]:
@@ -183,6 +203,8 @@ def main_menu():
                     display_time()
                 elif command == "health":
                     display_health()
+                elif command == "map":
+                    open_map()
                 else:
                     handle_command(command)
                 if health == 0:
