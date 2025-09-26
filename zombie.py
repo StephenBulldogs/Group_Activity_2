@@ -89,7 +89,7 @@ def reset_game():
             "zombie": ["boss"]
         },
         "kirby_student_center_floor_3": {
-            "description": "You entered kirby student center floor 3.",
+            "description": "You entered kirby student center floor 3. Behind you is the RDC",
             "exits": {"back": "rdc_hallway", "down": "kirby_student_center_floor_2", },
             "items": [],
             "hide": "Nowhere to hide",
@@ -165,7 +165,8 @@ def display_time():
     print(f"You look at your phone, its currently {current_time}.")
 
 def fight():
-    global health, current_location
+    global health, current_location, current_time
+
     if locations[current_location]["zombie"]:
         zombies_in_location = locations[current_location]["zombie"]
         for zombie_name in zombies_in_location:
@@ -179,6 +180,7 @@ def fight():
 
                 fight = input("> ").lower()
                 if fight == "use fists":
+                    add_time(30)
                     zombie_health -= 20
                     print(f"You hit the zombie for {BLUE}20 Damage{NORMAL}")
                     if zombie_health > 0:
@@ -193,6 +195,7 @@ def fight():
                         print(f"You defeated the zombie")
 
                 elif fight == "use knife":
+                    add_time(30)
                     zombie_health -= 40
                     print(f"You hit the zombie for {BLUE}40 Damage{NORMAL}")
                     if zombie_health > 0:
