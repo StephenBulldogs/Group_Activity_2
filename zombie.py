@@ -20,6 +20,15 @@ health = 0
 set_time = 0
 current_time = 0
 target_time = datetime.datetime.combine(today, datetime.time(17, 30))
+command_list = ["out","take","drop","use","left","right","up","down","in","back","turn","examine","fight","defend","run","read"]
+items = {
+    "backpack":{
+        "description": "you see a backpack on the ground."
+    },
+    "knife":{
+        "description": "you see a knife."
+    },
+}
 
 def reset_game():
     global health, locations, current_location, inventory, set_time, current_time
@@ -28,8 +37,7 @@ def reset_game():
         "residence_dining_center": {
             "description": "You are in the RDC. You hear a loud noise. turning your head you see what you can only describe as zombies attacking others.\nYou run to the exit, you stop at the doors you can choose to hide or go out?",
             "exits": {"out": "rdc_hallway", },
-            "items": [],
-            "item_desc": "",
+            "items": ["knife"],
             "hide": "a zombie scratches you!",
             "hide_result": "damage",
             "safe": True,
@@ -39,7 +47,6 @@ def reset_game():
             "description": "You're heart racing you must choose go left towards the dorms or go right towards kirby student center",
             "exits": {"left": "griggs_hall", "right": "kirby_student_center_floor_3", },
             "items": ["backpack"],
-            "item_desc": "On the ground you see a",
             "hide": "You hide in the bathrooms for 2 mins",
             "hide_result": 120,
             "safe": False,
@@ -50,7 +57,6 @@ def reset_game():
             "description": "You entered griggs hall. You think you hear a noise",
             "exits": {"back": "rdc_hallway"},
             "items": [],
-            "item_desc": "",
             "hide": "Nowhere to hide",
             "hide_result": 0,
             "safe": True,
@@ -59,7 +65,6 @@ def reset_game():
             "description": "You entered kirby student center floor 3.",
             "exits": {"back": "rdc_hallway", "down": "kirby_student_center_floor_2", },
             "items": [],
-            "item_desc": "",
             "hide": "Nowhere to hide",
             "hide_result": 0,
             "safe": True,
@@ -68,7 +73,6 @@ def reset_game():
             "description": "You entered kirby student center floor 2.",
             "exits": {"up": "kirby_student_center_floor_3", },
             "items": [],
-            "item_desc": "",
             "hide": "Nowhere to hide",
             "hide_result": 0,
             "safe": True,
@@ -91,25 +95,29 @@ def display_menu():
 
 def display_time():
     global current_time
-    print(f"You look at your phone, its currently {current_time}")
+    print(f"You look at your phone, its currently {current_time}.")
 
 def display_health():
     global health
     print(f"Your current health: {BLUE}{health}{NORMAL}")
 
 def display_rules():
-    print("Commands: Go, Take, Inventory, Use, Attack, Hide, Time, Health, Menu")
+    print("Commands: Go, Take, Inventory, Drop, Hide, Time, Health, Menu")
+    print("This game uses a Verb/Noun command system: go out, take knife, etc")
+    print("You have 30 minutes to get to safety. Changing locations, and hiding take time so be careful not to take to long.")
 
 def display_location():
     print(locations[current_location]["description"])
     if locations[current_location]["items"]:
-        print(locations[current_location]["item_desc"], ", ".join(locations[current_location]["items"]))
+        items_in_location = locations[current_location]["items"]
+        for item_name in items_in_location:
+            print(items[item_name]["description"])
 
 def handle_command(command):
     global current_location, inventory, current_time, health
     parts = command.lower().split()
     verb = parts[0]
-    noun = " ".join(parts[1:]) if len(parts) > 1 else ""
+    noun = parts[1]
 
     if verb == "go":
         if noun in locations[current_location]["exits"]:
@@ -127,24 +135,13 @@ def handle_command(command):
             print(f"You took the {noun}.")
         else:
             print(f"There is no {noun} here.")
-    elif verb == "hide":
-        print(locations[current_location]["hide"])
-        if locations[current_location]["hide_result"] == "damage":
-            health -= locations[current_location]["damage"]
-            print(f"You take {RED}{locations[current_location]["damage"]} damage{NORMAL}")
-        elif locations[current_location]["hide_result"] >= 0:
-            add_time(locations[current_location]["hide_result"])
-            if locations[current_location]["safe"] == False:
-                locations[current_location]["safe"] = True
-    elif verb == "inventory":
-        if inventory:
-            print("Your inventory:", ", ".join(inventory))
+    elif verb == "drop":
+        if noun in inventory:
+            inventory.remove(noun)
+            locations[current_location]["items"].append(noun)
+            print(f"You dropped the {noun}.")
         else:
-            print("Your inventory is empty.")
-    elif verb == "time":
-        display_time()
-    elif verb == "health":
-        display_health()
+            print(f"You do not have a {noun}.")
     else:
         print("Invalid command.")
 
@@ -158,9 +155,27 @@ def main_menu():
         elif choice == '2':
             while True:
                 display_location()
-                command = input("> ").strip()
+                command = input("> ").strip().lower()
                 if command == "menu":
                     break
+                elif command == "hide":
+                    print(locations[current_location]["hide"])
+                    if locations[current_location]["hide_result"] == "damage":
+                        health -= locations[current_location]["damage"]
+                        print(f"You take {RED}{locations[current_location]["damage"]} damage{NORMAL}")
+                    elif locations[current_location]["hide_result"] >= 0:
+                        add_time(locations[current_location]["hide_result"])
+                        if locations[current_location]["safe"] == False:
+                            locations[current_location]["safe"] = True
+                elif command == "inventory":
+                    if inventory:
+                        print("Your inventory:", ", ".join(inventory))
+                    else:
+                        print("Your inventory is empty.")
+                elif command == "time":
+                    display_time()
+                elif command == "health":
+                    display_health()
                 else:
                     handle_command(command)
                 if health == 0:
