@@ -7,7 +7,6 @@ Date:
 import datetime
 import cv2
 
-
 BOLD = "\033[1m"
 NORMAL = "\033[0m"
 RED = '\033[31m'
@@ -34,6 +33,21 @@ items = {
     },
 }
 
+zombies = {
+    "normal":{
+        "description": "there is a zombie blocking your path!",
+        "health": 40
+    },
+    "heavy":{
+        "description": "there is a big zombie blocking your path!",
+        "health": 80
+    },
+    "boss":{
+        "description": "there is a giant zombie blocking your path!",
+        "health": 200
+    },
+}
+
 def reset_game():
     global health, locations, current_location, inventory, set_time, current_time
     health = 100
@@ -47,6 +61,7 @@ def reset_game():
             "safe": True,
             "damage": 20,
             "map": "rdc.png",
+            "zombie": ["normal"]
         },
         "rdc_hallway": {
             "description": "You're heart racing you must choose go left towards the dorms or go right towards kirby student center",
@@ -58,6 +73,7 @@ def reset_game():
             "safe_result": "As you attempt to leave a zombie scratches you",
             "damage": 20,
             "map": "rdc_hallway.png",
+            "zombie": []
         },
         "griggs_hall": {
             "description": "You entered griggs hall. You think you hear a noise",
@@ -67,6 +83,7 @@ def reset_game():
             "hide_result": 0,
             "safe": True,
             "map": "griggs.png",
+            "zombie": []
         },
         "kirby_student_center_floor_3": {
             "description": "You entered kirby student center floor 3.",
@@ -76,15 +93,27 @@ def reset_game():
             "hide_result": 0,
             "safe": True,
             "map": "ksc.png",
+            "zombie": []
         },
         "kirby_student_center_floor_2": {
             "description": "You entered kirby student center floor 2.",
-            "exits": {"up": "kirby_student_center_floor_3", },
+            "exits": {"up": "kirby_student_center_floor_3", "down": "kirby_student_center_floor_1", },
             "items": [],
             "hide": "Nowhere to hide",
             "hide_result": 0,
             "safe": True,
             "map": "ksc.png",
+            "zombie": []
+        },
+        "kirby_student_center_floor_1": {
+            "description": "You entered kirby student center floor 1.",
+            "exits": {"up": "kirby_student_center_floor_2", },
+            "items": [],
+            "hide": "Nowhere to hide",
+            "hide_result": 0,
+            "safe": True,
+            "map": "ksc.png",
+            "zombie": ["heavy"]
         }
     }
     current_location = "residence_dining_center"
@@ -112,6 +141,10 @@ def display_location():
         items_in_location = locations[current_location]["items"]
         for item_name in items_in_location:
             print(items[item_name]["description"])
+    if locations[current_location]["zombie"]:
+        zombies_in_location = locations[current_location]["zombie"]
+        for zombie_name in zombies_in_location:
+            print(zombies[zombie_name]["description"])
 
 def display_menu():
     print("\n--- Main Menu ---")
@@ -128,6 +161,41 @@ def display_time():
     global current_time
     print(f"You look at your phone, its currently {current_time}.")
 
+def fight():
+    global health, current_location
+    if locations[current_location]["zombie"]:
+        zombies_in_location = locations[current_location]["zombie"]
+        for zombie_name in zombies_in_location:
+            zombie_health=zombies[zombie_name]["health"]
+            print(f"Zombie Health: {BLUE}{zombie_health}{NORMAL}")
+            while zombie_health > 0:
+                print("use fists")
+                if "knife" in inventory:
+                    print("use knife")
+
+                fight = input("> ").lower()
+                if fight == "use fists":
+                    zombie_health -= 20
+                    print(f"You hit the zombie for {BLUE}20 Damage{NORMAL}")
+                    if zombie_health > 0:
+                        health -= 20
+                        print(f"The zombie scratched you doing {RED}20 Damage{NORMAL}")
+                    else:
+                        locations[current_location]["zombie"].remove(zombie_name)
+                        print(f"You defeated the zombie")
+
+                elif fight == "use knife":
+                    zombie_health -= 40
+                    print(f"You hit the zombie for {BLUE}40 Damage{NORMAL}")
+                    if zombie_health > 0:
+                        health -= 20
+                        print(f"The zombie scratched you doing {RED}20 Damage{NORMAL}")
+                    else:
+                        locations[current_location]["zombie"].remove(zombie_name)
+                        print(f"You defeated the zombie")
+                else:
+                    print("Invalid command.")
+
 def handle_command(command):
     global current_location, inventory, current_time, health
     parts = command.lower().split()
@@ -135,7 +203,11 @@ def handle_command(command):
     noun = " ".join(parts[1:]) if len(parts) > 1 else ""
 
     if verb == "go":
-        if noun in locations[current_location]["exits"]:
+        if locations[current_location]["zombie"]:
+            zombies_in_location = locations[current_location]["zombie"]
+            for zombie_name in zombies_in_location:
+                print(zombies[zombie_name]["description"], "\nYou cannot leave")
+        elif noun in locations[current_location]["exits"]:
             if locations[current_location]["safe"] == False:
                 print(f"{locations[current_location]["safe_result"]}, you take {RED}{locations[current_location]["damage"]} damage{NORMAL}")
                 health -= locations[current_location]["damage"]
@@ -199,6 +271,10 @@ def main_menu():
                     display_health()
                 elif command == "map":
                     map()
+                elif command == "fight":
+                    fight()
+                elif command == "fight zombie":
+                    fight()
                 else:
                     handle_command(command)
                 if health == 0:
