@@ -96,37 +96,15 @@ def add_time(time):
     global current_time
     current_time += datetime.timedelta(seconds=time)
 
-def open_map():
-    # Load the image
-    image = cv2.imread(locations[current_location]["map"])
-
-    # Display the image in a window
-    cv2.imshow('Current Location', image)
-
-    # Wait for a key press (0 means indefinitely, or specify milliseconds)
-    cv2.waitKey(0)
-
-    # Close all OpenCV windows
-    cv2.destroyAllWindows()
-
-def display_menu():
-    print("\n--- Main Menu ---")
-    print("1. Display Rules")
-    print("2. Play Game")
-    print("3. Exit")
-
-def display_time():
-    global current_time
-    print(f"You look at your phone, its currently {current_time}.")
-
 def display_health():
     global health
     print(f"Your current health: {BLUE}{health}{NORMAL}")
 
-def display_rules():
-    print("Commands: Go, Take, Inventory, Drop, Hide, Time, Health, Examine, Menu, Map")
-    print("This game uses a Verb/Noun command system: go out, take knife, etc")
-    print("You have 30 minutes to get to safety. Changing locations, and hiding take time so be careful not to take to long.")
+def display_inventory():
+    if inventory:
+        print("Your inventory:", ", ".join(inventory))
+    else:
+        print("Your inventory is empty.")
 
 def display_location():
     print(locations[current_location]["description"])
@@ -134,6 +112,21 @@ def display_location():
         items_in_location = locations[current_location]["items"]
         for item_name in items_in_location:
             print(items[item_name]["description"])
+
+def display_menu():
+    print("\n--- Main Menu ---")
+    print("1. Display Rules")
+    print("2. Play Game")
+    print("3. Exit")
+
+def display_rules():
+    print("Commands: Go, Take, Inventory, Drop, Hide, Time, Health, Examine, Menu, Map")
+    print("This game uses a Verb/Noun command system: go out, take knife, etc")
+    print("You have 30 minutes to get to safety. Changing locations, and hiding take time so be careful not to take to long.")
+
+def display_time():
+    global current_time
+    print(f"You look at your phone, its currently {current_time}.")
 
 def handle_command(command):
     global current_location, inventory, current_time, health
@@ -172,6 +165,17 @@ def handle_command(command):
     else:
         print("Invalid command.")
 
+def handle_hide():
+    global health
+    print(locations[current_location]["hide"])
+    if locations[current_location]["hide_result"] == "damage":
+        health -= locations[current_location]["damage"]
+        print(f"You take {RED}{locations[current_location]["damage"]} damage{NORMAL}")
+    elif locations[current_location]["hide_result"] >= 0:
+        add_time(locations[current_location]["hide_result"])
+        if locations[current_location]["safe"] == False:
+            locations[current_location]["safe"] = True
+
 def main_menu():
     global health, current_time
     while True:
@@ -186,25 +190,15 @@ def main_menu():
                 if command == "menu":
                     break
                 elif command == "hide":
-                    print(locations[current_location]["hide"])
-                    if locations[current_location]["hide_result"] == "damage":
-                        health -= locations[current_location]["damage"]
-                        print(f"You take {RED}{locations[current_location]["damage"]} damage{NORMAL}")
-                    elif locations[current_location]["hide_result"] >= 0:
-                        add_time(locations[current_location]["hide_result"])
-                        if locations[current_location]["safe"] == False:
-                            locations[current_location]["safe"] = True
+                    handle_hide()
                 elif command == "inventory":
-                    if inventory:
-                        print("Your inventory:", ", ".join(inventory))
-                    else:
-                        print("Your inventory is empty.")
+                    display_inventory()
                 elif command == "time":
                     display_time()
                 elif command == "health":
                     display_health()
                 elif command == "map":
-                    open_map()
+                    map()
                 else:
                     handle_command(command)
                 if health == 0:
@@ -220,6 +214,19 @@ def main_menu():
             break
         else:
             print("Invalid choice. Please enter a number between 1 and 3.")
+
+def map():
+    # Load the image
+    image = cv2.imread(locations[current_location]["map"])
+
+    # Display the image in a window
+    cv2.imshow('Current Location', image)
+
+    # Wait for a key press (0 means indefinitely, or specify milliseconds)
+    cv2.waitKey(0)
+
+    # Close all OpenCV windows
+    cv2.destroyAllWindows()
 
 reset_game()
 main_menu()
