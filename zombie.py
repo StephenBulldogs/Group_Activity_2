@@ -73,7 +73,7 @@ def reset_game():
             "safe": True,
             "damage": 20,
             "map": "rdc.png",
-            "zombie": ["normal"]
+            "zombie": ["normal","normal"]
         },
         "rdc_hallway": {
             "description": "You're heart racing you must choose go left towards the dorms or go right towards kirby student center",
@@ -192,7 +192,6 @@ def fight():
         for zombie_name in zombies_in_location:
             zombie_health=zombies[zombie_name]["health"]
             damage=zombies[zombie_name]["strength"]
-            print(f"Zombie Health: {BLUE}{zombie_health}{NORMAL}")
 
             #loops while zombie has health
             while zombie_health > 0:
@@ -209,43 +208,43 @@ def fight():
                 if item == "fists":
                     add_time(30)
                     zombie_health -= 20
-                    print(f"You hit the zombie for {BLUE}20 Damage{NORMAL}")
+                    print(f"You hit the {zombie_name} zombie for {BLUE}20 Damage{NORMAL}")
                     #check if zombie alive
                     if zombie_health > 0:
                         #have zombie do damage to you
                         health -= damage
-                        print(f"The zombie scratched you doing {RED}{damage} Damage{NORMAL}")
+                        print(f"The {zombie_name} zombie scratched you doing {RED}{damage} Damage{NORMAL}")
                         #check if you are still alive
                         if health <= 0:
                             #you died game over, reset and show menu
-                            print(f"{RED}You Died, GAME OVER{NORMAL}")
+                            print(f"{RED}You died, GAME OVER{NORMAL}")
                             reset_game()
                             main_menu()
                     #zombie died
                     else:
                         locations[current_location]["zombie"].remove(zombie_name)
-                        print(f"You defeated the zombie")
+                        print(f"You defeated the {zombie_name} zombie")
 
                 #fight with items in inventory
                 elif item in inventory:
                     add_time(30)
                     zombie_health -= items[item]["damage"]
-                    print(f"You hit the zombie for {BLUE}{items[item]["damage"]} Damage{NORMAL}")
+                    print(f"You hit the {zombie_name} zombie for {BLUE}{items[item]["damage"]} Damage{NORMAL}")
                     # check if zombie alive
                     if zombie_health > 0:
                         health -= damage
-                        print(f"The zombie scratched you doing {RED}{damage} Damage{NORMAL}")
+                        print(f"The {zombie_name} zombie scratched you doing {RED}{damage} Damage{NORMAL}")
                         #check if you are still alive
                         if health <= 0:
                             # you died game over, reset and show menu
-                            print(f"{RED}You Died, GAME OVER{NORMAL}")
+                            print(f"{RED}You died, GAME OVER{NORMAL}")
                             reset_game()
                             main_menu()
                     #zombie died
                     else:
                         #remove zombie from location
                         locations[current_location]["zombie"].remove(zombie_name)
-                        print(f"You defeated the zombie")
+                        print(f"You defeated the {zombie_name} zombie")
 
                 #Command not recognized or item not in inventory
                 else:
@@ -316,6 +315,7 @@ def handle_hide():
     print(locations[current_location]["hide"])
     #location damages you for hiding
     if locations[current_location]["hide_result"] == "damage":
+        add_time(30)
         health -= locations[current_location]["damage"]
         print(f"You take {RED}{locations[current_location]["damage"]} damage{NORMAL}")
     #location adds time and makes location safe
@@ -361,7 +361,7 @@ def main_menu():
                     handle_command(command)
                 #died
                 if health == 0:
-                    print(f"You Died\n{RED}Game Over!{NORMAL}")
+                    print(f"You died\n{RED}Game Over!{NORMAL}")
                     reset_game()
                     break
                 #took too long to get to safety
@@ -380,13 +380,10 @@ def main_menu():
 def map():
     # Load the image
     image = cv2.imread(locations[current_location]["map"])
-
     # Display the image in a window
     cv2.imshow('Current Location', image)
-
     # Wait for a key press (0 means indefinitely, or specify milliseconds)
     cv2.waitKey(0)
-
     # Close all OpenCV windows
     cv2.destroyAllWindows()
 
