@@ -44,16 +44,16 @@ items = {
 
 zombies = {
     "normal":{
-        "description": "there is a zombie blocking your path!",
+        "description": "there is a normal zombie blocking your path!",
         "health": 40,
         "strength": 20
     },
-    "heavy":{
+    "big":{
         "description": "there is a big zombie blocking your path!",
         "health": 80,
         "strength": 40
     },
-    "boss":{
+    "giant":{
         "description": "there is a giant zombie blocking your path!",
         "health": 200,
         "strength": 60
@@ -95,7 +95,7 @@ def reset_game():
             "hide_result": 0,
             "safe": True,
             "map": "griggs.png",
-            "zombie": ["boss"]
+            "zombie": ["giant"]
         },
         "kirby_student_center_floor_3": {
             "description": "You entered kirby student center floor 3. Behind you is the RDC",
@@ -125,7 +125,7 @@ def reset_game():
             "hide_result": 0,
             "safe": True,
             "map": "ksc.png",
-            "zombie": ["heavy"]
+            "zombie": ["big"]
         }
     }
     current_location = "residence_dining_center"
@@ -171,9 +171,9 @@ def display_menu():
 
 #displays rules
 def display_rules():
-    print("Commands: Go, Take, Inventory, Drop, Hide, Time, Health, Examine, Menu, Map")
-    print("This game uses a Verb/Noun command system: go out, take knife, etc")
-    print("You have 30 minutes to get to safety. Changing locations, and hiding take time so be careful not to take to long.")
+    print("Commands: Go, Fight, Take, Inventory, Drop, Hide, Time, Health, Examine, Menu, Map")
+    print("This game uses a Verb/Noun command system: go out, take knife, use knife, etc...")
+    print("You have 30 minutes to get to safety. Changing locations, and hiding takes time so be careful not to take to long.")
 
 #displays time to player
 def display_time():
