@@ -7,12 +7,14 @@ Date:
 import datetime
 import cv2
 
+#Console Styles for print
 BOLD = "\033[1m"
 NORMAL = "\033[0m"
 RED = '\033[31m'
 GREEN = '\033[32m'
 BLUE = '\033[34m'
 
+#Variables and Tables Needed
 today = datetime.date.today()
 locations = "none"
 current_location = "none"
@@ -57,7 +59,7 @@ zombies = {
         "strength": 60
     },
 }
-
+#Reset Game to reset tables/tuples/arrays/variables on game over
 def reset_game():
     global health, locations, current_location, inventory, set_time, current_time
     health = 100
@@ -131,20 +133,24 @@ def reset_game():
     set_time = datetime.time(17, 0, 0)
     current_time = datetime.datetime.combine(today, set_time)
 
+#add time to current time
 def add_time(time):
     global current_time
     current_time += datetime.timedelta(seconds=time)
 
+#displays your current health to player
 def display_health():
     global health
     print(f"Your current health: {BLUE}{health}{NORMAL}")
 
+#displays current inventory to player
 def display_inventory():
     if inventory:
         print("Your inventory:", ", ".join(inventory))
     else:
         print("Your inventory is empty.")
 
+#displays location information for player
 def display_location():
     print(locations[current_location]["description"])
     if locations[current_location]["items"]:
@@ -156,66 +162,92 @@ def display_location():
         for zombie_name in zombies_in_location:
             print(zombies[zombie_name]["description"])
 
+#displays menu
 def display_menu():
     print("\n--- Main Menu ---")
     print("1. Display Rules")
     print("2. Play Game")
     print("3. Exit")
 
+#displays rules
 def display_rules():
     print("Commands: Go, Take, Inventory, Drop, Hide, Time, Health, Examine, Menu, Map")
     print("This game uses a Verb/Noun command system: go out, take knife, etc")
     print("You have 30 minutes to get to safety. Changing locations, and hiding take time so be careful not to take to long.")
 
+#displays time to player
 def display_time():
     global current_time
     print(f"You look at your phone, its currently {current_time}.")
 
+#fight function for fighting zombies
 def fight():
     global health, current_location, current_time
 
+    # checks if location has a zombie
     if locations[current_location]["zombie"]:
         zombies_in_location = locations[current_location]["zombie"]
+
+        #loop for zombies in location
         for zombie_name in zombies_in_location:
             zombie_health=zombies[zombie_name]["health"]
             damage=zombies[zombie_name]["strength"]
             print(f"Zombie Health: {BLUE}{zombie_health}{NORMAL}")
+
+            #loops while zombie has health
             while zombie_health > 0:
                 print("use fists")
+
+                #prints commands for each item in inventory
                 for item_name in inventory:
                     print(f"use {item_name}")
 
                 fight = input("> ").lower().split()
                 item = " ".join(fight[1:]) if len(fight) > 1 else ""
+
+                #Fight with fists
                 if item == "fists":
                     add_time(30)
                     zombie_health -= 20
                     print(f"You hit the zombie for {BLUE}20 Damage{NORMAL}")
+                    #check if zombie alive
                     if zombie_health > 0:
+                        #have zombie do damage to you
                         health -= damage
                         print(f"The zombie scratched you doing {RED}{damage} Damage{NORMAL}")
+                        #check if you are still alive
                         if health <= 0:
+                            #you died game over, reset and show menu
                             print(f"{RED}You Died, GAME OVER{NORMAL}")
                             reset_game()
                             main_menu()
-                    else:
-                        locations[current_location]["zombie"].remove(zombie_name)
-                        print(f"You defeated the zombie")
-                elif item in inventory:
-                    add_time(30)
-                    zombie_health -= items[item]["damage"]
-                    print(f"You hit the zombie for {BLUE}{items[item]["damage"]} Damage{NORMAL}")
-                    if zombie_health > 0:
-                        health -= damage
-                        print(f"The zombie scratched you doing {RED}{damage} Damage{NORMAL}")
-                        if health <= 0:
-                            print(f"{RED}You Died, GAME OVER{NORMAL}")
-                            reset_game()
-                            main_menu()
+                    #zombie died
                     else:
                         locations[current_location]["zombie"].remove(zombie_name)
                         print(f"You defeated the zombie")
 
+                #fight with items in inventory
+                elif item in inventory:
+                    add_time(30)
+                    zombie_health -= items[item]["damage"]
+                    print(f"You hit the zombie for {BLUE}{items[item]["damage"]} Damage{NORMAL}")
+                    # check if zombie alive
+                    if zombie_health > 0:
+                        health -= damage
+                        print(f"The zombie scratched you doing {RED}{damage} Damage{NORMAL}")
+                        #check if you are still alive
+                        if health <= 0:
+                            # you died game over, reset and show menu
+                            print(f"{RED}You Died, GAME OVER{NORMAL}")
+                            reset_game()
+                            main_menu()
+                    #zombie died
+                    else:
+                        #remove zombie from location
+                        locations[current_location]["zombie"].remove(zombie_name)
+                        print(f"You defeated the zombie")
+
+                #Command not recognized or item not in inventory
                 else:
                     print("Invalid command.")
 
@@ -224,48 +256,69 @@ def handle_command(command):
     parts = command.lower().split()
     verb = parts[0]
     noun = " ".join(parts[1:]) if len(parts) > 1 else ""
-
+    #change locations with go command
     if verb == "go":
+        #check if zombie is in the way
         if locations[current_location]["zombie"]:
             zombies_in_location = locations[current_location]["zombie"]
+            #display zombies blocking path
             for zombie_name in zombies_in_location:
                 print(zombies[zombie_name]["description"], "\nYou cannot leave")
+        #check to see that current location has that exit
         elif noun in locations[current_location]["exits"]:
+            #check if location is unsafe, if not do damage
             if locations[current_location]["safe"] == False:
                 print(f"{locations[current_location]["safe_result"]}, you take {RED}{locations[current_location]["damage"]} damage{NORMAL}")
                 health -= locations[current_location]["damage"]
             current_location = locations[current_location]["exits"][noun]
             add_time(30)
+        #Current location doesnt have that exit
         else:
             print("You can't go that way.")
+    #Take items
     elif verb == "take":
+        #check if location has that item
         if noun in locations[current_location]["items"]:
+            #add to inventory
             inventory.append(noun)
+            #remove from location
             locations[current_location]["items"].remove(noun)
             print(f"You took the {noun}.")
+        #location does not have item
         else:
             print(f"There is no {noun} here.")
+    #drop items
     elif verb == "drop":
+        #check if item is in inventory
         if noun in inventory:
+            #remove item from inventory
             inventory.remove(noun)
+            #add item to location
             locations[current_location]["items"].append(noun)
             print(f"You dropped the {noun}.")
+        #you do not have item
         else:
             print(f"You do not have a {noun}.")
+    #examine items
     elif verb == "examine":
+        #check if you have item
         if noun in inventory:
             print(f"{items[noun]["examine"]}")
+        #you do not have item
         else:
             print(f"You do not have a {noun}.")
+    #command wasnt recognized
     else:
         print("Invalid command.")
-
+#function for hide command
 def handle_hide():
     global health
     print(locations[current_location]["hide"])
+    #location damages you for hiding
     if locations[current_location]["hide_result"] == "damage":
         health -= locations[current_location]["damage"]
         print(f"You take {RED}{locations[current_location]["damage"]} damage{NORMAL}")
+    #location adds time and makes location safe
     elif locations[current_location]["hide_result"] >= 0:
         add_time(locations[current_location]["hide_result"])
         if locations[current_location]["safe"] == False:
@@ -273,14 +326,20 @@ def handle_hide():
 
 def main_menu():
     global health, current_time
+    #main menu loop
     while True:
+        #display menu
         display_menu()
         choice = input("Enter your choice (1-3): ")
+        #display rules
         if choice == '1':
             display_rules()
+        #play game
         elif choice == '2':
             while True:
+                #prints location information
                 display_location()
+                #Handle Game Commands
                 command = input("> ").strip().lower()
                 if command == "menu":
                     break
@@ -300,17 +359,21 @@ def main_menu():
                     fight()
                 else:
                     handle_command(command)
+                #died
                 if health == 0:
                     print(f"You Died\n{RED}Game Over!{NORMAL}")
                     reset_game()
                     break
+                #took too long to get to safety
                 if current_time >= target_time:
                     print(f"The zombies have overrun the school.\n{RED}Game Over!{NORMAL}")
                     reset_game()
                     break
+        #exit program
         elif choice == '3':
             print("Exiting the program. Goodbye!")
             break
+        #invalid choice
         else:
             print("Invalid choice. Please enter a number between 1 and 3.")
 
@@ -327,5 +390,6 @@ def map():
     # Close all OpenCV windows
     cv2.destroyAllWindows()
 
+#resets all game variables/tables/tuples/arrays and starts main menu loop
 reset_game()
 main_menu()
