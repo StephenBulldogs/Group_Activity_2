@@ -6,6 +6,7 @@ Date:
 
 import datetime
 import cv2
+import turtle
 
 #Console Styles for print
 BOLD = "\033[1m"
@@ -23,7 +24,6 @@ health = 0
 set_time = 0
 current_time = 0
 target_time = datetime.datetime.combine(today, datetime.time(17, 30))
-command_list = ["out","take","drop","use","left","right","up","down","in","back","turn","examine","fight","defend","run","read"]
 items = {
     "backpack":{
         "description": "you see a backpack on the ground.",
@@ -72,7 +72,8 @@ def reset_game():
             "hide_result": "damage",
             "safe": True,
             "damage": 20,
-            "map": "rdc.png",
+            "map-width": 40,
+            "map-height": 10,
             "zombie": ["normal","normal"]
         },
         "rdc_hallway": {
@@ -84,7 +85,8 @@ def reset_game():
             "safe": False,
             "safe_result": "As you attempt to leave a zombie scratches you",
             "damage": 20,
-            "map": "rdc_hallway.png",
+            "map-width": 80,
+            "map-height": 5,
             "zombie": []
         },
         "griggs_hall": {
@@ -94,7 +96,8 @@ def reset_game():
             "hide": "Nowhere to hide",
             "hide_result": 0,
             "safe": True,
-            "map": "griggs.png",
+            "map-width": 30,
+            "map-height": 10,
             "zombie": ["giant"]
         },
         "kirby_student_center_floor_3": {
@@ -104,7 +107,8 @@ def reset_game():
             "hide": "Nowhere to hide",
             "hide_result": 0,
             "safe": True,
-            "map": "ksc.png",
+            "map-width": 15,
+            "map-height": 5,
             "zombie": []
         },
         "kirby_student_center_floor_2": {
@@ -114,7 +118,8 @@ def reset_game():
             "hide": "Nowhere to hide",
             "hide_result": 0,
             "safe": True,
-            "map": "ksc.png",
+            "map-width": 15,
+            "map-height": 5,
             "zombie": []
         },
         "kirby_student_center_floor_1": {
@@ -124,7 +129,8 @@ def reset_game():
             "hide": "Nowhere to hide",
             "hide_result": 0,
             "safe": True,
-            "map": "ksc.png",
+            "map-width": 40,
+            "map-height": 10,
             "zombie": ["big"]
         }
     }
@@ -165,9 +171,12 @@ def display_location():
 #displays menu
 def display_menu():
     print("\n--- Main Menu ---")
-    print("1. Display Rules")
+    print("1. Instructions")
     print("2. Play Game")
-    print("3. Exit")
+    print("3. Save the Game")
+    print("4. Load the Game")
+    print("5. Settings")
+    print("6. Exit")
 
 #displays rules
 def display_rules():
@@ -369,8 +378,14 @@ def main_menu():
                     print(f"The zombies have overrun the school.\n{RED}Game Over!{NORMAL}")
                     reset_game()
                     break
-        #exit program
         elif choice == '3':
+            print("Save game is not implemented")
+        elif choice == '4':
+            print("Load game is not implemented")
+        elif choice == '5':
+            print("Settings is not implemented")
+        #exit program
+        elif choice == '6':
             print("Exiting the program. Goodbye!")
             break
         #invalid choice
@@ -378,14 +393,19 @@ def main_menu():
             print("Invalid choice. Please enter a number between 1 and 3.")
 
 def map():
-    # Load the image
-    image = cv2.imread(locations[current_location]["map"])
-    # Display the image in a window
-    cv2.imshow('Current Location', image)
-    # Wait for a key press (0 means indefinitely, or specify milliseconds)
-    cv2.waitKey(0)
-    # Close all OpenCV windows
-    cv2.destroyAllWindows()
+    width = locations[current_location]["map-width"]
+    height = locations[current_location]["map-height"]
+    for r in range(height):
+        if r == 0:
+            # Top
+            print(f"Location: {current_location}")
+            print("*" * width)
+        elif r == height - 1:
+            # Top
+            print("*" * width)
+        else:
+            # Middle rows have border characters at the ends and inner characters in between
+            print("*" + " " * (width - 2) + "*")
 
 #resets all game variables/tables/tuples/arrays and starts main menu loop
 reset_game()
