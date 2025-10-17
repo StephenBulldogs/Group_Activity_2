@@ -6,7 +6,6 @@ Date:
 
 import datetime
 import cv2
-import turtle
 
 #Console Styles for print
 BOLD = "\033[1m"
@@ -19,6 +18,7 @@ BLUE = '\033[34m'
 today = datetime.date.today()
 locations = "none"
 current_location = "none"
+previous_location = "none"
 inventory = []
 health = 0
 set_time = 0
@@ -59,21 +59,26 @@ zombies = {
         "strength": 60
     },
 }
+
+def save_game():
+    print("This does not work yet!")
+
+def load_game():
+    print("This does not work yet!")
+
 #Reset Game to reset tables/tuples/arrays/variables on game over
 def reset_game():
-    global health, locations, current_location, inventory, set_time, current_time
+    global health, locations, current_location, inventory, set_time, current_time, previous_location
     health = 100
     locations = {
         "residence_dining_center": {
-            "description": "You are in the RDC. You hear a loud noise. turning your head you see what you can only describe as zombies attacking others.\nYou run to the exit, you stop at the doors you can choose to hide or go out?",
+            "description": "You hear a loud noise. turning your head you see what you can only describe as zombies attacking others.\nYou run to the exit, you stop at the doors you can choose to hide or go out?",
             "exits": {"out": "rdc_hallway", },
             "items": ["knife"],
             "hide": "a zombie scratches you!",
             "hide_result": "damage",
             "safe": True,
             "damage": 20,
-            "map-width": 40,
-            "map-height": 10,
             "zombie": ["normal","normal"]
         },
         "rdc_hallway": {
@@ -85,8 +90,6 @@ def reset_game():
             "safe": False,
             "safe_result": "As you attempt to leave a zombie scratches you",
             "damage": 20,
-            "map-width": 80,
-            "map-height": 5,
             "zombie": []
         },
         "griggs_hall": {
@@ -96,8 +99,6 @@ def reset_game():
             "hide": "Nowhere to hide",
             "hide_result": 0,
             "safe": True,
-            "map-width": 30,
-            "map-height": 10,
             "zombie": ["giant"]
         },
         "kirby_student_center_floor_3": {
@@ -107,8 +108,6 @@ def reset_game():
             "hide": "Nowhere to hide",
             "hide_result": 0,
             "safe": True,
-            "map-width": 15,
-            "map-height": 5,
             "zombie": []
         },
         "kirby_student_center_floor_2": {
@@ -118,8 +117,6 @@ def reset_game():
             "hide": "Nowhere to hide",
             "hide_result": 0,
             "safe": True,
-            "map-width": 15,
-            "map-height": 5,
             "zombie": []
         },
         "kirby_student_center_floor_1": {
@@ -129,12 +126,11 @@ def reset_game():
             "hide": "Nowhere to hide",
             "hide_result": 0,
             "safe": True,
-            "map-width": 40,
-            "map-height": 10,
             "zombie": ["big"]
         }
     }
     current_location = "residence_dining_center"
+    previous_location = "residence_dining_center"
     inventory = []
     set_time = datetime.time(17, 0, 0)
     current_time = datetime.datetime.combine(today, set_time)
@@ -158,15 +154,18 @@ def display_inventory():
 
 #displays location information for player
 def display_location():
+    print(f"You are currently in {current_location.replace("_"," ").title()}")
     print(locations[current_location]["description"])
     if locations[current_location]["items"]:
         items_in_location = locations[current_location]["items"]
         for item_name in items_in_location:
             print(items[item_name]["description"])
+    if locations[current_location]["safe"] == False:
+        print("There are zombies nearby you think you can get around them without fighting.")
     if locations[current_location]["zombie"]:
         zombies_in_location = locations[current_location]["zombie"]
         for zombie_name in zombies_in_location:
-            print(zombies[zombie_name]["description"])
+            print(f"{zombies[zombie_name]["description"]} Run or Fight")
 
 #displays menu
 def display_menu():
@@ -180,7 +179,7 @@ def display_menu():
 
 #displays rules
 def display_rules():
-    print("Commands: Go, Fight, Take, Inventory, Drop, Hide, Time, Health, Examine, Menu, Map")
+    print("Commands: Go, Fight, Take, Inventory, Drop, Hide, Time, Health, Examine, Run, Menu, Map")
     print("This game uses a Verb/Noun command system: go out, take knife, use knife, etc...")
     print("You have 30 minutes to get to safety. Changing locations, and hiding takes time so be careful not to take to long.")
 
@@ -260,7 +259,7 @@ def fight():
                     print("Invalid command.")
 
 def handle_command(command):
-    global current_location, inventory, current_time, health
+    global current_location, inventory, current_time, health, previous_location
     parts = command.lower().split()
     verb = parts[0]
     noun = " ".join(parts[1:]) if len(parts) > 1 else ""
@@ -278,6 +277,8 @@ def handle_command(command):
             if locations[current_location]["safe"] == False:
                 print(f"{locations[current_location]["safe_result"]}, you take {RED}{locations[current_location]["damage"]} damage{NORMAL}")
                 health -= locations[current_location]["damage"]
+
+            previous_location = current_location
             current_location = locations[current_location]["exits"][noun]
             add_time(30)
         #Current location doesnt have that exit
@@ -315,6 +316,12 @@ def handle_command(command):
         #you do not have item
         else:
             print(f"You do not have a {noun}.")
+    #Run
+    elif verb == "run":
+        get_previous_location = current_location
+        current_location = previous_location
+        previous_location = get_previous_location
+        add_time(30)
     #command wasnt recognized
     else:
         print("Invalid command.")
@@ -339,7 +346,7 @@ def main_menu():
     while True:
         #display menu
         display_menu()
-        choice = input("Enter your choice (1-3): ")
+        choice = input("Enter your choice (1-6): ")
         #display rules
         if choice == '1':
             display_rules()
@@ -379,9 +386,9 @@ def main_menu():
                     reset_game()
                     break
         elif choice == '3':
-            print("Save game is not implemented")
+            save_game()
         elif choice == '4':
-            print("Load game is not implemented")
+            load_game()
         elif choice == '5':
             print("Settings is not implemented")
         #exit program
@@ -393,19 +400,14 @@ def main_menu():
             print("Invalid choice. Please enter a number between 1 and 3.")
 
 def map():
-    width = locations[current_location]["map-width"]
-    height = locations[current_location]["map-height"]
-    for r in range(height):
-        if r == 0:
-            # Top
-            print(f"Location: {current_location}")
-            print("*" * width)
-        elif r == height - 1:
-            # Top
-            print("*" * width)
-        else:
-            # Middle rows have border characters at the ends and inner characters in between
-            print("*" + " " * (width - 2) + "*")
+    # Load the image
+    image = cv2.imread(locations[current_location]["map"])
+    # Display the image in a window
+    cv2.imshow('Current Location', image)
+    # Wait for a key press (0 means indefinitely, or specify milliseconds)
+    cv2.waitKey(0)
+    # Close all OpenCV windows
+    cv2.destroyAllWindows()
 
 #resets all game variables/tables/tuples/arrays and starts main menu loop
 reset_game()
