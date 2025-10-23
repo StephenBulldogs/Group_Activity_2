@@ -99,7 +99,12 @@ def load_game():
         current_location = loaded_data["current_location"]
         previous_location = loaded_data["previous_location"]
         #Convert the JSON acceptable string to DateTime format
-        current_time = datetime.datetime.fromisoformat(game_time)
+        saved_time = datetime.datetime.fromisoformat(game_time)
+        #Get today's date
+        today = datetime.date.today()
+        #Replace saved file with todays date in case they saved at another time
+        current_time = saved_time.replace(year=today.year, month=today.month, day=today.day)
+
         print("Data loaded successfully")
 
 #Reset Game to reset tables/tuples/arrays/variables on game over
@@ -592,6 +597,7 @@ def main_menu():
             # Hard Mode
             elif mode == '3':
                 hard_mode()
+            # Back to Menu
             elif mode == '4':
                 main_menu()
             else:
