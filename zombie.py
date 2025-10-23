@@ -64,38 +64,43 @@ zombies = {
 
 def save_game():
     global file_name, health, locations, current_location, inventory, current_time, previous_location
-    #Convert Current Time to JSON acceptable string
-    game_time = current_time.isoformat()
-    #Converts all the needed data to one dictionary for JSON (easy to read)
-    data_to_save = {
-        "health": health,
-        "current_location": current_location,
-        "previous_location": previous_location,
-        "current_time": game_time,
-        "inventory": inventory,
-        "locations": locations,
-    }
-    # Save the dictionary to a text file
-    with open(file_name, "w") as f:
-        json.dump(data_to_save, f, indent=4)  # indent for human readability
+    verify = input("Are you sure you want to Save game? (Yes or No): ").lower().strip() == "yes"
+    if verify:
+        #Convert Current Time to JSON acceptable string
+        game_time = current_time.isoformat()
+        #Converts all the needed data to one dictionary for JSON (easy to read)
+        data_to_save = {
+            "health": health,
+            "current_location": current_location,
+            "previous_location": previous_location,
+            "current_time": game_time,
+            "inventory": inventory,
+            "locations": locations,
+        }
+        # Save the dictionary to a text file
+        with open(file_name, "w") as f:
+            json.dump(data_to_save, f, indent=4)  # indent for human readability
 
-    print("\nData saved successfully using.")
+        print("Data saved successfully")
 
 def load_game():
     global file_name, health, locations, current_location, inventory, current_time, previous_location
-    # Load the data from the file
-    with open(file_name, "r") as f:
-        loaded_data = json.load(f)
+    verify = input("Are you sure you want to load game? (Yes or No): ").lower().strip() == "yes"
+    if verify:
+        # Load the data from the file
+        with open(file_name, "r") as f:
+            loaded_data = json.load(f)
 
-    # Access your loaded data
-    health = loaded_data["health"]
-    locations = loaded_data["locations"]
-    inventory = loaded_data["inventory"]
-    game_time = loaded_data["current_time"]
-    current_location = loaded_data["current_location"]
-    previous_location = loaded_data["previous_location"]
-    #Convert the JSON acceptable string to DateTime format
-    current_time = datetime.datetime.fromisoformat(game_time)
+        # Access your loaded data
+        health = loaded_data["health"]
+        locations = loaded_data["locations"]
+        inventory = loaded_data["inventory"]
+        game_time = loaded_data["current_time"]
+        current_location = loaded_data["current_location"]
+        previous_location = loaded_data["previous_location"]
+        #Convert the JSON acceptable string to DateTime format
+        current_time = datetime.datetime.fromisoformat(game_time)
+        print("Data loaded successfully")
 
 #Reset Game to reset tables/tuples/arrays/variables on game over
 def reset_game():
@@ -182,6 +187,140 @@ def reset_game():
     except FileExistsError:
         print("")
 
+#Reset Game for easy mode
+def easy_mode():
+    global health, locations, current_location, inventory, set_time, current_time, previous_location
+    health = 1000
+    locations = {
+        "residence_dining_center": {
+            "description": "You hear a loud noise. turning your head you see what you can only describe as zombies attacking others.\nYou run to the exit, you stop at the doors you can choose to hide or go out?",
+            "exits": {"out": "rdc_hallway", },
+            "items": ["knife"],
+            "hide": "a zombie scratches you!",
+            "hide_result": "damage",
+            "safe": True,
+            "damage": 20,
+            "zombie": ["normal"]
+        },
+        "rdc_hallway": {
+            "description": "You're heart racing you must choose go left towards the dorms or go right towards kirby student center",
+            "exits": {"left": "griggs_hall", "right": "kirby_student_center_floor_3", },
+            "items": ["backpack"],
+            "hide": "Nowhere to hide",
+            "hide_result": 0,
+            "safe": True,
+            "zombie": []
+        },
+        "griggs_hall": {
+            "description": "You entered griggs hall. You think you hear a noise",
+            "exits": {"back": "rdc_hallway"},
+            "items": [],
+            "hide": "Nowhere to hide",
+            "hide_result": 0,
+            "safe": True,
+            "zombie": ["giant"]
+        },
+        "kirby_student_center_floor_3": {
+            "description": "You entered kirby student center floor 3. Behind you is the RDC",
+            "exits": {"back": "rdc_hallway", "down": "kirby_student_center_floor_2", },
+            "items": [],
+            "hide": "Nowhere to hide",
+            "hide_result": 0,
+            "safe": True,
+            "zombie": []
+        },
+        "kirby_student_center_floor_2": {
+            "description": "You entered kirby student center floor 2.",
+            "exits": {"up": "kirby_student_center_floor_3", "down": "kirby_student_center_floor_1", },
+            "items": [],
+            "hide": "Nowhere to hide",
+            "hide_result": 0,
+            "safe": True,
+            "zombie": []
+        },
+        "kirby_student_center_floor_1": {
+            "description": "You entered kirby student center floor 1.",
+            "exits": {"up": "kirby_student_center_floor_2", },
+            "items": [],
+            "hide": "Nowhere to hide",
+            "hide_result": 0,
+            "safe": True,
+            "zombie": ["big"]
+        }
+    }
+    current_location = "residence_dining_center"
+    previous_location = "residence_dining_center"
+    inventory = []
+    set_time = datetime.time(17, 0, 0)
+    current_time = datetime.datetime.combine(today, set_time)
+
+#Reset Game for Hard mode
+def hard_mode():
+    global health, locations, current_location, inventory, set_time, current_time, previous_location
+    health = 20
+    locations = {
+        "residence_dining_center": {
+            "description": "You hear a loud noise. turning your head you see what you can only describe as zombies attacking others.\nYou run to the exit, you stop at the doors you can choose to hide or go out?",
+            "exits": {"out": "rdc_hallway", },
+            "items": ["knife"],
+            "hide": "a zombie scratches you!",
+            "hide_result": "damage",
+            "safe": True,
+            "damage": 20,
+            "zombie": ["normal","normal"]
+        },
+        "rdc_hallway": {
+            "description": "You're heart racing you must choose go left towards the dorms or go right towards kirby student center",
+            "exits": {"left": "griggs_hall", "right": "kirby_student_center_floor_3", },
+            "items": ["backpack"],
+            "hide": "Nowhere to hide",
+            "hide_result": 0,
+            "safe": True,
+            "zombie": ["normal","normal"]
+        },
+        "griggs_hall": {
+            "description": "You entered griggs hall. You think you hear a noise",
+            "exits": {"back": "rdc_hallway"},
+            "items": [],
+            "hide": "Nowhere to hide",
+            "hide_result": 0,
+            "safe": True,
+            "zombie": ["normal","big","giant"]
+        },
+        "kirby_student_center_floor_3": {
+            "description": "You entered kirby student center floor 3. Behind you is the RDC",
+            "exits": {"back": "rdc_hallway", "down": "kirby_student_center_floor_2", },
+            "items": [],
+            "hide": "Nowhere to hide",
+            "hide_result": 0,
+            "safe": True,
+            "zombie": ["normal","normal"]
+        },
+        "kirby_student_center_floor_2": {
+            "description": "You entered kirby student center floor 2.",
+            "exits": {"up": "kirby_student_center_floor_3", "down": "kirby_student_center_floor_1", },
+            "items": [],
+            "hide": "Nowhere to hide",
+            "hide_result": 0,
+            "safe": True,
+            "zombie": ["normal","normal"]
+        },
+        "kirby_student_center_floor_1": {
+            "description": "You entered kirby student center floor 1.",
+            "exits": {"up": "kirby_student_center_floor_2", },
+            "items": [],
+            "hide": "Nowhere to hide",
+            "hide_result": 0,
+            "safe": True,
+            "zombie": ["normal","normal","big"]
+        }
+    }
+    current_location = "residence_dining_center"
+    previous_location = "residence_dining_center"
+    inventory = []
+    set_time = datetime.time(17, 0, 0)
+    current_time = datetime.datetime.combine(today, set_time)
+
 #add time to current time
 def add_time(time):
     global current_time
@@ -221,7 +360,7 @@ def display_menu():
     print("2. Play Game")
     print("3. Save the Game")
     print("4. Load the Game")
-    print("5. Settings")
+    print("5. Game Mode")
     print("6. Exit")
 
 #displays rules
@@ -437,14 +576,33 @@ def main_menu():
         elif choice == '4':
             load_game()
         elif choice == '5':
-            print("Settings is not implemented")
+            print("\n--- Mode Settings ---")
+            print("1. Easy Mode")
+            print("2. Normal Mode")
+            print("3. Hard Mode")
+            print("4. Back")
+            print(f"{RED}WARNING: Selecting a game mode will reset any current games. If you do not wish to change game mode select 4. Back{NORMAL}")
+            mode = input("Enter your choice (1-4): ")
+            # Easy Mode
+            if mode == '1':
+                easy_mode()
+            # Normal Mode
+            elif mode == '2':
+                reset_game()
+            # Hard Mode
+            elif mode == '3':
+                hard_mode()
+            elif mode == '4':
+                main_menu()
+            else:
+                print("Invalid choice. Please enter a number between 1 and 4.")
         #exit program
         elif choice == '6':
             print("Exiting the program. Goodbye!")
             break
         #invalid choice
         else:
-            print("Invalid choice. Please enter a number between 1 and 3.")
+            print("Invalid choice. Please enter a number between 1 and 6.")
 
 def map():
     # Load the image
