@@ -6,6 +6,7 @@ Date:
 
 import datetime
 import cv2
+import json
 
 #Console Styles for print
 BOLD = "\033[1m"
@@ -15,6 +16,7 @@ GREEN = '\033[32m'
 BLUE = '\033[34m'
 
 #Variables and Tables Needed
+file_name = "data.txt"
 today = datetime.date.today()
 locations = "none"
 current_location = "none"
@@ -61,10 +63,39 @@ zombies = {
 }
 
 def save_game():
-    print("This does not work yet!")
+    global file_name, health, locations, current_location, inventory, current_time, previous_location
+    #Convert Current Time to JSON acceptable string
+    game_time = current_time.isoformat()
+    #Converts all the needed data to one dictionary for JSON (easy to read)
+    data_to_save = {
+        "health": health,
+        "current_location": current_location,
+        "previous_location": previous_location,
+        "current_time": game_time,
+        "inventory": inventory,
+        "locations": locations,
+    }
+    # Save the dictionary to a text file
+    with open(file_name, "w") as f:
+        json.dump(data_to_save, f, indent=4)  # indent for human readability
+
+    print("\nData saved successfully using.")
 
 def load_game():
-    print("This does not work yet!")
+    global file_name, health, locations, current_location, inventory, current_time, previous_location
+    # Load the data from the file
+    with open(file_name, "r") as f:
+        loaded_data = json.load(f)
+
+    # Access your loaded data
+    health = loaded_data["health"]
+    locations = loaded_data["locations"]
+    inventory = loaded_data["inventory"]
+    game_time = loaded_data["current_time"]
+    current_location = loaded_data["current_location"]
+    previous_location = loaded_data["previous_location"]
+    #Convert the JSON acceptable string to DateTime format
+    current_time = datetime.datetime.fromisoformat(game_time)
 
 #Reset Game to reset tables/tuples/arrays/variables on game over
 def reset_game():
@@ -134,6 +165,22 @@ def reset_game():
     inventory = []
     set_time = datetime.time(17, 0, 0)
     current_time = datetime.datetime.combine(today, set_time)
+    game_time = current_time.isoformat()
+    # Converts all the needed data to one dictionary for JSON (easy to read)
+    data_to_save = {
+        "health": health,
+        "current_location": current_location,
+        "previous_location": previous_location,
+        "current_time": game_time,
+        "inventory": inventory,
+        "locations": locations,
+    }
+    try:
+        with open(file_name, 'x') as f:
+            json.dump(data_to_save, f, indent=4)  # indent for human readability
+        print("")
+    except FileExistsError:
+        print("")
 
 #add time to current time
 def add_time(time):
