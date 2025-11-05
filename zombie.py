@@ -102,12 +102,35 @@ def load_game():
         saved_time = datetime.datetime.fromisoformat(game_time)
         #Get today's date
         today = datetime.date.today()
-        #Replace saved file with todays date in case they saved at another time
+        #Replace saved file with today's date in case they saved at another time
         current_time = saved_time.replace(year=today.year, month=today.month, day=today.day)
 
         print("Data loaded successfully")
 
-#Reset Game to reset tables/tuples/arrays/variables on game over
+#Game Mode Options
+def settings():
+    print("\n--- Mode Settings ---")
+    print("1. Easy Mode")
+    print("2. Normal Mode")
+    print("3. Hard Mode")
+    print("4. Back")
+    print(
+        f"{RED}WARNING: Selecting a game mode will reset any current games. If you do not wish to change game mode select 4. Back{NORMAL}")
+    mode = input("Enter your choice (1-4): ")
+    # Easy Mode
+    if mode == '1':
+        easy_mode()
+    # Normal Mode
+    elif mode == '2':
+        reset_game()
+    # Hard Mode
+    elif mode == '3':
+        hard_mode()
+    # Back to Menu
+    elif mode == '4':
+        main_menu()
+
+#Reset Game (also Normal Mode)
 def reset_game():
     global health, locations, current_location, inventory, set_time, current_time, previous_location
     health = 100
@@ -118,6 +141,7 @@ def reset_game():
             "items": ["knife"],
             "hide": "a zombie scratches you!",
             "hide_result": "damage",
+            "map": "rdc.png",
             "safe": True,
             "damage": 20,
             "zombie": ["normal","normal"]
@@ -128,6 +152,7 @@ def reset_game():
             "items": ["backpack"],
             "hide": "You hide in the bathrooms for 2 mins",
             "hide_result": 120,
+            "map": "rdc_hallway.png",
             "safe": False,
             "safe_result": "As you attempt to leave a zombie scratches you",
             "damage": 20,
@@ -139,6 +164,7 @@ def reset_game():
             "items": [],
             "hide": "Nowhere to hide",
             "hide_result": 0,
+            "map": "griggs.png",
             "safe": True,
             "zombie": ["giant"]
         },
@@ -148,6 +174,7 @@ def reset_game():
             "items": [],
             "hide": "Nowhere to hide",
             "hide_result": 0,
+            "map": "ksc.png",
             "safe": True,
             "zombie": []
         },
@@ -157,6 +184,7 @@ def reset_game():
             "items": [],
             "hide": "Nowhere to hide",
             "hide_result": 0,
+            "map": "ksc.png",
             "safe": True,
             "zombie": []
         },
@@ -166,6 +194,7 @@ def reset_game():
             "items": [],
             "hide": "Nowhere to hide",
             "hide_result": 0,
+            "map": "ksc.png",
             "safe": True,
             "zombie": ["big"]
         }
@@ -203,6 +232,7 @@ def easy_mode():
             "items": ["knife"],
             "hide": "a zombie scratches you!",
             "hide_result": "damage",
+            "map": "rdc.png",
             "safe": True,
             "damage": 20,
             "zombie": ["normal"]
@@ -213,6 +243,7 @@ def easy_mode():
             "items": ["backpack"],
             "hide": "Nowhere to hide",
             "hide_result": 0,
+            "map": "rdc_hallway.png",
             "safe": True,
             "zombie": []
         },
@@ -222,6 +253,7 @@ def easy_mode():
             "items": [],
             "hide": "Nowhere to hide",
             "hide_result": 0,
+            "map": "griggs.png",
             "safe": True,
             "zombie": ["giant"]
         },
@@ -231,6 +263,7 @@ def easy_mode():
             "items": [],
             "hide": "Nowhere to hide",
             "hide_result": 0,
+            "map": "ksc.png",
             "safe": True,
             "zombie": []
         },
@@ -240,6 +273,7 @@ def easy_mode():
             "items": [],
             "hide": "Nowhere to hide",
             "hide_result": 0,
+            "map": "ksc.png",
             "safe": True,
             "zombie": []
         },
@@ -249,6 +283,7 @@ def easy_mode():
             "items": [],
             "hide": "Nowhere to hide",
             "hide_result": 0,
+            "map": "ksc.png",
             "safe": True,
             "zombie": ["big"]
         }
@@ -270,6 +305,7 @@ def hard_mode():
             "items": ["knife"],
             "hide": "a zombie scratches you!",
             "hide_result": "damage",
+            "map": "rdc.png",
             "safe": True,
             "damage": 20,
             "zombie": ["normal","normal"]
@@ -280,6 +316,7 @@ def hard_mode():
             "items": ["backpack"],
             "hide": "Nowhere to hide",
             "hide_result": 0,
+            "map": "rdc_hallway.png",
             "safe": True,
             "zombie": ["normal","normal"]
         },
@@ -289,6 +326,7 @@ def hard_mode():
             "items": [],
             "hide": "Nowhere to hide",
             "hide_result": 0,
+            "map": "griggs.png",
             "safe": True,
             "zombie": ["normal","big","giant"]
         },
@@ -298,6 +336,7 @@ def hard_mode():
             "items": [],
             "hide": "Nowhere to hide",
             "hide_result": 0,
+            "map": "ksc.png",
             "safe": True,
             "zombie": ["normal","normal"]
         },
@@ -307,6 +346,7 @@ def hard_mode():
             "items": [],
             "hide": "Nowhere to hide",
             "hide_result": 0,
+            "map": "ksc.png",
             "safe": True,
             "zombie": ["normal","normal"]
         },
@@ -316,8 +356,9 @@ def hard_mode():
             "items": [],
             "hide": "Nowhere to hide",
             "hide_result": 0,
+            "map": "ksc.png",
             "safe": True,
-            "zombie": ["normal","normal","big"]
+            "zombie": ["normal","normal"]
         }
     }
     current_location = "residence_dining_center"
@@ -369,7 +410,7 @@ def display_menu():
     print("6. Exit")
 
 #displays rules
-def display_rules():
+def display_instructions():
     print("Commands: Go, Fight, Take, Inventory, Drop, Hide, Time, Health, Examine, Run, Menu, Map")
     print("This game uses a Verb/Noun command system: go out, take knife, use knife, etc...")
     print("You have 30 minutes to get to safety. Changing locations, and hiding takes time so be careful not to take to long.")
@@ -513,7 +554,7 @@ def handle_command(command):
         current_location = previous_location
         previous_location = get_previous_location
         add_time(30)
-    #command wasnt recognized
+    #command wasn't recognized
     else:
         print("Invalid command.")
 #function for hide command
@@ -540,7 +581,7 @@ def main_menu():
         choice = input("Enter your choice (1-6): ")
         #display rules
         if choice == '1':
-            display_rules()
+            display_instructions()
         #play game
         elif choice == '2':
             while True:
@@ -581,27 +622,7 @@ def main_menu():
         elif choice == '4':
             load_game()
         elif choice == '5':
-            print("\n--- Mode Settings ---")
-            print("1. Easy Mode")
-            print("2. Normal Mode")
-            print("3. Hard Mode")
-            print("4. Back")
-            print(f"{RED}WARNING: Selecting a game mode will reset any current games. If you do not wish to change game mode select 4. Back{NORMAL}")
-            mode = input("Enter your choice (1-4): ")
-            # Easy Mode
-            if mode == '1':
-                easy_mode()
-            # Normal Mode
-            elif mode == '2':
-                reset_game()
-            # Hard Mode
-            elif mode == '3':
-                hard_mode()
-            # Back to Menu
-            elif mode == '4':
-                main_menu()
-            else:
-                print("Invalid choice. Please enter a number between 1 and 4.")
+            settings()
         #exit program
         elif choice == '6':
             print("Exiting the program. Goodbye!")
