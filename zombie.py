@@ -60,6 +60,11 @@ zombies = {
         "health": 200,
         "strength": 60
     },
+    "boss":{
+        "description": "there is a wave of giant zombie blocking your path, You should run!",
+        "health": 1000,
+        "strength": 200
+    },
 }
 
 def save_game():
@@ -107,29 +112,6 @@ def load_game():
 
         print("Data loaded successfully")
 
-#Game Mode Options
-def settings():
-    print("\n--- Mode Settings ---")
-    print("1. Easy Mode")
-    print("2. Normal Mode")
-    print("3. Hard Mode")
-    print("4. Back")
-    print(
-        f"{RED}WARNING: Selecting a game mode will reset any current games. If you do not wish to change game mode select 4. Back{NORMAL}")
-    mode = input("Enter your choice (1-4): ")
-    # Easy Mode
-    if mode == '1':
-        easy_mode()
-    # Normal Mode
-    elif mode == '2':
-        reset_game()
-    # Hard Mode
-    elif mode == '3':
-        hard_mode()
-    # Back to Menu
-    elif mode == '4':
-        main_menu()
-
 #Reset Game (also Normal Mode)
 def reset_game():
     global health, locations, current_location, inventory, set_time, current_time, previous_location
@@ -169,7 +151,7 @@ def reset_game():
             "zombie": ["giant"]
         },
         "kirby_student_center_floor_3": {
-            "description": "You entered kirby student center floor 3. Behind you is the RDC",
+            "description": "You entered kirby student center floor 3. Behind you is the RDC or you can go down the stairs",
             "exits": {"back": "rdc_hallway", "down": "kirby_student_center_floor_2", },
             "items": [],
             "hide": "Nowhere to hide",
@@ -179,7 +161,7 @@ def reset_game():
             "zombie": []
         },
         "kirby_student_center_floor_2": {
-            "description": "You entered kirby student center floor 2.",
+            "description": "You entered kirby student center floor 2. All the doors are blocked you can go down or up.",
             "exits": {"up": "kirby_student_center_floor_3", "down": "kirby_student_center_floor_1", },
             "items": [],
             "hide": "Nowhere to hide",
@@ -189,14 +171,54 @@ def reset_game():
             "zombie": []
         },
         "kirby_student_center_floor_1": {
-            "description": "You entered kirby student center floor 1.",
-            "exits": {"up": "kirby_student_center_floor_2", },
+            "description": "You entered kirby student center floor 1. The path is blocked besides going forward to solon campus center stairs",
+            "exits": {"up": "kirby_student_center_floor_2", "forward": "scc_stairs"},
             "items": [],
             "hide": "Nowhere to hide",
             "hide_result": 0,
             "map": "ksc.png",
             "safe": True,
             "zombie": ["big"]
+        },
+        "scc_stairs": {
+            "description": "You entered solon campus stairs. Much of the stairs are blocked you can leave on kirby or the 'math' dept",
+            "exits": {"kirby": "kirby_student_center_floor_1", "math": "math_department"},
+            "items": [],
+            "hide": "Nowhere to hide",
+            "hide_result": 0,
+            "map": "solon.png",
+            "safe": True,
+            "zombie": []
+        },
+        "math_department": {
+            "description": "You entered solon campus center math department. You can take the stairs up towards kirby or go forward to the wedge ...\nbut you hear some people talking in the veteran center... do you want to go in?",
+            "exits": {"up": "scc_stairs", "in": "vet_center", "forward": "the_wedge"},
+            "items": [],
+            "hide": "Nowhere to hide",
+            "hide_result": 0,
+            "map": "solon.png",
+            "safe": True,
+            "zombie": []
+        },
+        "vet_center": {
+            "description": "There is a few other students in here, they seem prepared.. however one is looking for his backpack... you can choose to go out",
+            "exits": {"out": "math_department"},
+            "items": [],
+            "hide": "Nowhere to hide",
+            "hide_result": 0,
+            "map": "solon.png",
+            "safe": True,
+            "zombie": []
+        },
+        "the_wedge": {
+            "description": "The admissions wedge is full of zombies...",
+            "exits": {"back": "math_department"},
+            "items": [],
+            "hide": "Nowhere to hide",
+            "hide_result": 0,
+            "map": "wedge.png",
+            "safe": True,
+            "zombie": ["boss"]
         }
     }
     current_location = "residence_dining_center"
@@ -220,152 +242,6 @@ def reset_game():
         print("")
     except FileExistsError:
         print("")
-
-#Reset Game for easy mode
-def easy_mode():
-    global health, locations, current_location, inventory, set_time, current_time, previous_location
-    health = 1000
-    locations = {
-        "residence_dining_center": {
-            "description": "You hear a loud noise. turning your head you see what you can only describe as zombies attacking others.\nYou run to the exit, you stop at the doors you can choose to hide or go out?",
-            "exits": {"out": "rdc_hallway", },
-            "items": ["knife"],
-            "hide": "a zombie scratches you!",
-            "hide_result": "damage",
-            "map": "rdc.png",
-            "safe": True,
-            "damage": 20,
-            "zombie": ["normal"]
-        },
-        "rdc_hallway": {
-            "description": "You're heart racing you must choose go left towards the dorms or go right towards kirby student center",
-            "exits": {"left": "griggs_hall", "right": "kirby_student_center_floor_3", },
-            "items": ["backpack"],
-            "hide": "Nowhere to hide",
-            "hide_result": 0,
-            "map": "rdc_hallway.png",
-            "safe": True,
-            "zombie": []
-        },
-        "griggs_hall": {
-            "description": "You entered griggs hall. You think you hear a noise",
-            "exits": {"back": "rdc_hallway"},
-            "items": [],
-            "hide": "Nowhere to hide",
-            "hide_result": 0,
-            "map": "griggs.png",
-            "safe": True,
-            "zombie": ["giant"]
-        },
-        "kirby_student_center_floor_3": {
-            "description": "You entered kirby student center floor 3. Behind you is the RDC",
-            "exits": {"back": "rdc_hallway", "down": "kirby_student_center_floor_2", },
-            "items": [],
-            "hide": "Nowhere to hide",
-            "hide_result": 0,
-            "map": "ksc.png",
-            "safe": True,
-            "zombie": []
-        },
-        "kirby_student_center_floor_2": {
-            "description": "You entered kirby student center floor 2.",
-            "exits": {"up": "kirby_student_center_floor_3", "down": "kirby_student_center_floor_1", },
-            "items": [],
-            "hide": "Nowhere to hide",
-            "hide_result": 0,
-            "map": "ksc.png",
-            "safe": True,
-            "zombie": []
-        },
-        "kirby_student_center_floor_1": {
-            "description": "You entered kirby student center floor 1.",
-            "exits": {"up": "kirby_student_center_floor_2", },
-            "items": [],
-            "hide": "Nowhere to hide",
-            "hide_result": 0,
-            "map": "ksc.png",
-            "safe": True,
-            "zombie": ["big"]
-        }
-    }
-    current_location = "residence_dining_center"
-    previous_location = "residence_dining_center"
-    inventory = []
-    set_time = datetime.time(17, 0, 0)
-    current_time = datetime.datetime.combine(today, set_time)
-
-#Reset Game for Hard mode
-def hard_mode():
-    global health, locations, current_location, inventory, set_time, current_time, previous_location
-    health = 20
-    locations = {
-        "residence_dining_center": {
-            "description": "You hear a loud noise. turning your head you see what you can only describe as zombies attacking others.\nYou run to the exit, you stop at the doors you can choose to hide or go out?",
-            "exits": {"out": "rdc_hallway", },
-            "items": ["knife"],
-            "hide": "a zombie scratches you!",
-            "hide_result": "damage",
-            "map": "rdc.png",
-            "safe": True,
-            "damage": 20,
-            "zombie": ["normal","normal"]
-        },
-        "rdc_hallway": {
-            "description": "You're heart racing you must choose go left towards the dorms or go right towards kirby student center",
-            "exits": {"left": "griggs_hall", "right": "kirby_student_center_floor_3", },
-            "items": ["backpack"],
-            "hide": "Nowhere to hide",
-            "hide_result": 0,
-            "map": "rdc_hallway.png",
-            "safe": True,
-            "zombie": ["normal","normal"]
-        },
-        "griggs_hall": {
-            "description": "You entered griggs hall. You think you hear a noise",
-            "exits": {"back": "rdc_hallway"},
-            "items": [],
-            "hide": "Nowhere to hide",
-            "hide_result": 0,
-            "map": "griggs.png",
-            "safe": True,
-            "zombie": ["normal","big","giant"]
-        },
-        "kirby_student_center_floor_3": {
-            "description": "You entered kirby student center floor 3. Behind you is the RDC",
-            "exits": {"back": "rdc_hallway", "down": "kirby_student_center_floor_2", },
-            "items": [],
-            "hide": "Nowhere to hide",
-            "hide_result": 0,
-            "map": "ksc.png",
-            "safe": True,
-            "zombie": ["normal","normal"]
-        },
-        "kirby_student_center_floor_2": {
-            "description": "You entered kirby student center floor 2.",
-            "exits": {"up": "kirby_student_center_floor_3", "down": "kirby_student_center_floor_1", },
-            "items": [],
-            "hide": "Nowhere to hide",
-            "hide_result": 0,
-            "map": "ksc.png",
-            "safe": True,
-            "zombie": ["normal","normal"]
-        },
-        "kirby_student_center_floor_1": {
-            "description": "You entered kirby student center floor 1.",
-            "exits": {"up": "kirby_student_center_floor_2", },
-            "items": [],
-            "hide": "Nowhere to hide",
-            "hide_result": 0,
-            "map": "ksc.png",
-            "safe": True,
-            "zombie": ["normal","normal"]
-        }
-    }
-    current_location = "residence_dining_center"
-    previous_location = "residence_dining_center"
-    inventory = []
-    set_time = datetime.time(17, 0, 0)
-    current_time = datetime.datetime.combine(today, set_time)
 
 #add time to current time
 def add_time(time):
@@ -406,8 +282,7 @@ def display_menu():
     print("2. Play Game")
     print("3. Save the Game")
     print("4. Load the Game")
-    print("5. Game Mode")
-    print("6. Exit")
+    print("5. Exit")
 
 #displays rules
 def display_instructions():
@@ -603,8 +478,6 @@ def main_menu():
                     map()
                 elif command == "fight":
                     fight()
-                elif command == "fight zombie":
-                    fight()
                 else:
                     handle_command(command)
                 #died
@@ -621,15 +494,13 @@ def main_menu():
             save_game()
         elif choice == '4':
             load_game()
-        elif choice == '5':
-            settings()
         #exit program
-        elif choice == '6':
+        elif choice == '5':
             print("Exiting the program. Goodbye!")
             break
         #invalid choice
         else:
-            print("Invalid choice. Please enter a number between 1 and 6.")
+            print("Invalid choice. Please enter a number between 1 and 5.")
 
 def map():
     # Load the image
