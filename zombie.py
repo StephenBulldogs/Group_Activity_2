@@ -478,6 +478,8 @@ def main_menu():
                     map()
                 elif command == "fight":
                     fight()
+                elif command == "": #Handle Empty Command
+                    print("Invalid command.")
                 else:
                     handle_command(command)
                 #died
