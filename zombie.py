@@ -429,6 +429,17 @@ def handle_command(command):
         current_location = previous_location
         previous_location = get_previous_location
         add_time(30)
+    #Give
+    elif verb == "give":
+        if current_location == "vet_center":
+            if noun == "backpack":
+                print("You give the student the backpack and he gives you a gun in exchange")
+                inventory.remove("backpack")
+                inventory.append("gun")
+            else:
+                print("Invalid Item.")
+        else:
+            print("You can't do that.")
     #command wasn't recognized
     else:
         print("Invalid command.")
