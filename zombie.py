@@ -196,7 +196,7 @@ def reset_game():
             "items": [],
             "hide": "Nowhere to hide",
             "hide_result": 0,
-            "map": "solon.png",
+            "map": "math.png",
             "safe": True,
             "zombie": []
         },
@@ -206,7 +206,7 @@ def reset_game():
             "items": [],
             "hide": "Nowhere to hide",
             "hide_result": 0,
-            "map": "solon.png",
+            "map": "vet.png",
             "safe": True,
             "zombie": []
         },
