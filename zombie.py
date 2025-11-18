@@ -28,12 +28,12 @@ current_time = 0
 target_time = datetime.datetime.combine(today, datetime.time(17, 30))
 items = {
     "backpack":{
-        "description": "you see a backpack on the ground.",
-        "examine": "It has a army logo on it, you find keys inside",
+        "description": "You see a backpack on the ground.",
+        "examine": "It has an army logo on it, you find keys inside",
         "damage": 0
     },
     "knife":{
-        "description": "you see a knife.",
+        "description": "You see a knife.",
         "examine": "A sharp knife, it could be useful.",
         "damage": 40
     },
@@ -46,22 +46,22 @@ items = {
 
 zombies = {
     "normal":{
-        "description": "there is a normal zombie blocking your path!",
+        "description": "There is a normal zombie blocking your path!",
         "health": 40,
         "strength": 20
     },
     "big":{
-        "description": "there is a big zombie blocking your path!",
+        "description": "There is a big zombie blocking your path!",
         "health": 80,
         "strength": 40
     },
     "giant":{
-        "description": "there is a giant zombie blocking your path!",
+        "description": "There is a giant zombie blocking your path!",
         "health": 200,
         "strength": 60
     },
     "boss":{
-        "description": "there is a wave of giant zombie blocking your path, You should run!",
+        "description": "There is a wave of giant zombies blocking your path! You should run!",
         "health": 1000,
         "strength": 200
     },
@@ -69,7 +69,7 @@ zombies = {
 
 def save_game():
     global file_name, health, locations, current_location, inventory, current_time, previous_location
-    verify = input("Are you sure you want to Save game? (Yes or No): ").lower().strip() == "yes"
+    verify = input("Are you sure you want to Save Game? (Yes or No): ").lower().strip() == "yes"
     if verify:
         #Convert Current Time to JSON acceptable string
         game_time = current_time.isoformat()
@@ -118,10 +118,10 @@ def reset_game():
     health = 100
     locations = {
         "residence_dining_center": {
-            "description": "You hear a loud noise. turning your head you see what you can only describe as zombies attacking others.\nYou run to the exit, you stop at the doors you can choose to hide or go out?",
+            "description": "You hear a loud noise nearby...As you turn your head, you see zombies attacking other students!\nYou go to run towards an exit. At the doors you have the choice to hide or to go out?",
             "exits": {"out": "rdc_hallway", },
             "items": ["knife"],
-            "hide": "a zombie scratches you!",
+            "hide": "A zombie scratches you!",
             "hide_result": "damage",
             "map": "rdc.png",
             "safe": True,
@@ -129,19 +129,19 @@ def reset_game():
             "zombie": ["normal","normal"]
         },
         "rdc_hallway": {
-            "description": "Your heart is racing. You must choose go left towards the dorms or go right towards kirby student center",
+            "description": "Your heart is racing. You must choose to go left towards the Griggs dorms or go right towards Kirby Student Center",
             "exits": {"left": "griggs_hall", "right": "kirby_student_center_floor_3", },
             "items": ["backpack"],
             "hide": "You hide in the bathrooms for 2 mins",
             "hide_result": 120,
             "map": "rdc_hallway.png",
             "safe": False,
-            "safe_result": "As you attempt to leave a zombie scratches you",
+            "safe_result": "As you attempt to leave, a zombie scratches you!",
             "damage": 20,
             "zombie": []
         },
         "griggs_hall": {
-            "description": "You entered griggs hall. You think you hear a noise",
+            "description": "You've entered Griggs Hall. You think you hear a noise...",
             "exits": {"back": "rdc_hallway"},
             "items": [],
             "hide": "Nowhere to hide",
@@ -151,7 +151,7 @@ def reset_game():
             "zombie": ["giant"]
         },
         "kirby_student_center_floor_3": {
-            "description": "You entered kirby student center floor 3. Behind you is the RDC or you can go down the stairs",
+            "description": "You've entered Kirby Student Center floor 3. Behind you is either the RDC, or you can go down the stairs",
             "exits": {"back": "rdc_hallway", "down": "kirby_student_center_floor_2", },
             "items": [],
             "hide": "Nowhere to hide",
@@ -161,7 +161,7 @@ def reset_game():
             "zombie": []
         },
         "kirby_student_center_floor_2": {
-            "description": "You entered kirby student center floor 2. All the doors are blocked you can go down or up.",
+            "description": "You've entered Kirby Student Center floor 2. All the doors are blocked. You can go down or up.",
             "exits": {"up": "kirby_student_center_floor_3", "down": "kirby_student_center_floor_1", },
             "items": [],
             "hide": "Nowhere to hide",
@@ -171,7 +171,7 @@ def reset_game():
             "zombie": []
         },
         "kirby_student_center_floor_1": {
-            "description": "You entered kirby student center floor 1. The path is blocked besides going forward to solon campus center stairs",
+            "description": "You've entered Kirby Student Center floor 1. The path is blocked besides going forward to the Solon Campus Center stairs",
             "exits": {"up": "kirby_student_center_floor_2", "forward": "scc_stairs"},
             "items": [],
             "hide": "Nowhere to hide",
@@ -181,7 +181,7 @@ def reset_game():
             "zombie": ["big"]
         },
         "scc_stairs": {
-            "description": "You entered solon campus stairs. Much of the stairs are blocked you can leave on kirby or the 'math' dept",
+            "description": "You entered Solon Campus Stairs, though you find that most of the path is blocked off. You can leave on Kirby or the 'math' dept",
             "exits": {"kirby": "kirby_student_center_floor_1", "math": "math_department"},
             "items": [],
             "hide": "Nowhere to hide",
@@ -191,7 +191,7 @@ def reset_game():
             "zombie": []
         },
         "math_department": {
-            "description": "You entered solon campus center math department. You can take the stairs up towards kirby or go forward to the wedge ...\nbut you hear some people talking in the veteran center... do you want to go in?",
+            "description": "You entered the Solon Campus Center math department. You can either take the stairs up towards Kirby, or go forward to the wedge ...\nbut you hear some people talking in the Veteran Center... do you want to go in?",
             "exits": {"up": "scc_stairs", "in": "vet_center", "forward": "the_wedge"},
             "items": [],
             "hide": "Nowhere to hide",
@@ -201,7 +201,7 @@ def reset_game():
             "zombie": []
         },
         "vet_center": {
-            "description": "There is a few other students in here, they seem prepared.. however one is looking for his backpack... you can choose to go out",
+            "description": "There is a few other students in here, and they seem prepared... However one guy is looking for his backpack... you can choose to go out",
             "exits": {"out": "math_department"},
             "items": [],
             "hide": "Nowhere to hide",
@@ -269,7 +269,7 @@ def display_location():
         for item_name in items_in_location:
             print(items[item_name]["description"])
     if locations[current_location]["safe"] == False:
-        print("There are zombies nearby you think you can get around them without fighting.")
+        print("There are zombies nearby, though you think you can get around them without fighting.")
     if locations[current_location]["zombie"]:
         zombies_in_location = locations[current_location]["zombie"]
         for zombie_name in zombies_in_location:
