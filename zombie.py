@@ -290,10 +290,12 @@ def display_menu():
 
 #displays rules
 def display_instructions():
+    print(f"{GREEN}----------------------------- Instructions -----------------------------{NORMAL}")
     print("Commands: Go, Fight, Take, Inventory, Drop, Hide, Time, Health, Examine, Run, Menu, Map, Give")
     print("This game uses a Verb/Noun command system: go out, take knife, use knife, etc...")
     print("You have 30 minutes to get to safety. Changing locations, and hiding takes time so be careful not to take to long.")
-
+    print(f"{GREEN}------------------------------------------------------------------------{NORMAL}")
+    
 #displays time to player
 def display_time():
     global current_time
@@ -482,6 +484,7 @@ def main_menu():
                 command = input("> ").strip().lower()
                 if command == "":
                     print("Invalid Command")
+                    display_instructions()
                 elif command[0] == "m" and command[1] == "e" : #Menu
                     break
                 elif command[0] == "h" and command[1] == "i": #Hide
