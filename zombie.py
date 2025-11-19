@@ -509,6 +509,8 @@ def main_menu():
                     map()
                 elif command[0] == "f": #Fight
                     fight()
+                elif command == "": #Handle Empty Command
+                    print("Invalid command.")
                 else:
                     handle_command(command)
                 #died
