@@ -480,7 +480,9 @@ def main_menu():
                 display_location()
                 #Handle Game Commands
                 command = input("> ").strip().lower()
-                if command[0] == "m" and command[1] == "e" : #Menu
+                if command == "":
+                    print("Invalid Command")
+                elif command[0] == "m" and command[1] == "e" : #Menu
                     break
                 elif command[0] == "h" and command[1] == "i": #Hide
                     handle_hide()
@@ -494,8 +496,6 @@ def main_menu():
                     map()
                 elif command[0] == "f": #Fight
                     fight()
-                elif command == "":
-                    print("Invalid Command")
                 else:
                     handle_command(command)
                 #died
