@@ -146,7 +146,7 @@ def reset_game():
         },
         "griggs_hall": {
             "description": "You've entered Griggs Hall. You think you hear a noise...",
-            "exits": {"back": "rdc_hallway",  "forward": "dorm"},
+            "exits": {"back": "rdc_hallway",  "forward": "your_dorm"},
             "items": [],
             "hide": "Nowhere to hide",
             "hide_result": 0,
@@ -154,7 +154,7 @@ def reset_game():
             "safe": True,
             "zombie": ["giant"]
         },        
-        "dorm": {
+        "your_dorm": {
             "description": "You have made it to your dorm, you can now hide out until the zombies are gone!",
             "exits": {},
             "items": [],
@@ -521,6 +521,13 @@ def main_menu():
                     print(f"The zombies have overrun the school.\n{RED}Game Over!{NORMAL}")
                     reset_game()
                     break
+                #### Check for Win Condition
+                if current_location == "your_dorm":  # WIN CONDITION
+                    print(f"You Won!")
+                    display_time()
+                    reset_game()
+                    break
+                    
         elif choice == '3':
             save_game()
         elif choice == '4':
