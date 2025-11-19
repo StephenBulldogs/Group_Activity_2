@@ -69,8 +69,8 @@ zombies = {
 
 def save_game():
     global file_name, health, locations, current_location, inventory, current_time, previous_location
-    verify = input("Are you sure you want to Save Game? (Yes or No): ").lower().strip() == "yes"
-    if verify:
+    verify = input("Are you sure you want to Save Game? (Yes or No): ").lower().strip()
+    if verify[0] == "y":
         #Convert Current Time to JSON acceptable string
         game_time = current_time.isoformat()
         #Converts all the needed data to one dictionary for JSON (easy to read)
@@ -87,11 +87,13 @@ def save_game():
             json.dump(data_to_save, f, indent=4)  # indent for human readability
 
         print("Data saved successfully")
+    else:
+        print("Data not saved")
 
 def load_game():
     global file_name, health, locations, current_location, inventory, current_time, previous_location
-    verify = input("Are you sure you want to load game? (Yes or No): ").lower().strip() == "yes"
-    if verify:
+    verify = input("Are you sure you want to load game? (Yes or No): ").lower().strip()
+    if verify[0] == "y":
         # Load the data from the file
         with open(file_name, "r") as f:
             loaded_data = json.load(f)
@@ -111,6 +113,8 @@ def load_game():
         current_time = saved_time.replace(year=today.year, month=today.month, day=today.day)
 
         print("Data loaded successfully")
+    else:
+        print("Data not loaded")
 
 #Reset Game (also Normal Mode)
 def reset_game():
@@ -142,13 +146,23 @@ def reset_game():
         },
         "griggs_hall": {
             "description": "You've entered Griggs Hall. You think you hear a noise...",
-            "exits": {"back": "rdc_hallway"},
+            "exits": {"back": "rdc_hallway",  "forward": "your_dorm"},
             "items": [],
             "hide": "Nowhere to hide",
             "hide_result": 0,
             "map": "griggs.png",
             "safe": True,
             "zombie": ["giant"]
+        },        
+        "your_dorm": {
+            "description": "You have made it to your dorm, you can now hide out until the zombies are gone!",
+            "exits": {},
+            "items": [],
+            "hide": "",
+            "hide_result": 0,
+            "map": "griggs.png",
+            "safe": True,
+            "zombie": []
         },
         "kirby_student_center_floor_3": {
             "description": "You've entered Kirby Student Center floor 3. Behind you is either the RDC, or you can go down the stairs",
@@ -196,7 +210,7 @@ def reset_game():
             "items": [],
             "hide": "Nowhere to hide",
             "hide_result": 0,
-            "map": "solon.png",
+            "map": "math.png",
             "safe": True,
             "zombie": []
         },
@@ -206,7 +220,7 @@ def reset_game():
             "items": [],
             "hide": "Nowhere to hide",
             "hide_result": 0,
-            "map": "solon.png",
+            "map": "vet.png",
             "safe": True,
             "zombie": []
         },
@@ -286,10 +300,12 @@ def display_menu():
 
 #displays rules
 def display_instructions():
-    print("Commands: Go, Fight, Take, Inventory, Drop, Hide, Time, Health, Examine, Run, Menu, Map")
+    print(f"{GREEN}----------------------------- Instructions -----------------------------{NORMAL}")
+    print("Commands: Go, Fight, Take, Inventory, Drop, Hide, Time, Health, Examine, Run, Menu, Map, Give")
     print("This game uses a Verb/Noun command system: go out, take knife, use knife, etc...")
     print("You have 30 minutes to get to safety. Changing locations, and hiding takes time so be careful not to take to long.")
-
+    print(f"{GREEN}------------------------------------------------------------------------{NORMAL}")
+    
 #displays time to player
 def display_time():
     global current_time
@@ -371,7 +387,7 @@ def handle_command(command):
     verb = parts[0]
     noun = " ".join(parts[1:]) if len(parts) > 1 else ""
     #change locations with go command
-    if verb == "go":
+    if verb[0] == "g" and verb[1] == "o": #Go
         #check if zombie is in the way
         if locations[current_location]["zombie"]:
             zombies_in_location = locations[current_location]["zombie"]
@@ -392,7 +408,7 @@ def handle_command(command):
         else:
             print("You can't go that way.")
     #Take items
-    elif verb == "take":
+    elif verb[0] == "t" and verb[1] == "a": #Take
         #check if location has that item
         if noun in locations[current_location]["items"]:
             #add to inventory
@@ -404,7 +420,7 @@ def handle_command(command):
         else:
             print(f"There is no {noun} here.")
     #drop items
-    elif verb == "drop":
+    elif verb[0] == "d": #Drop
         #check if item is in inventory
         if noun in inventory:
             #remove item from inventory
@@ -416,7 +432,7 @@ def handle_command(command):
         else:
             print(f"You do not have a {noun}.")
     #examine items
-    elif verb == "examine":
+    elif verb[0] == "e": #Examine
         #check if you have item
         if noun in inventory:
             print(f"{items[noun]["examine"]}")
@@ -424,11 +440,23 @@ def handle_command(command):
         else:
             print(f"You do not have a {noun}.")
     #Run
-    elif verb == "run":
+    elif verb[0] == "r": #Run
         get_previous_location = current_location
         current_location = previous_location
         previous_location = get_previous_location
         add_time(30)
+    #Give
+    elif verb[0] == "g" and verb[1] == "i":
+        if current_location == "vet_center":
+            if noun == "backpack":
+                print("You give the student the backpack and he gives you a gun in exchange")
+                inventory.remove("backpack")
+                inventory.append("gun")
+            else:
+                print("Invalid Item.")
+        else:
+            print("You can't do that.")
+
     #command wasn't recognized
     else:
         print("Invalid command.")
@@ -464,19 +492,22 @@ def main_menu():
                 display_location()
                 #Handle Game Commands
                 command = input("> ").strip().lower()
-                if command == "menu":
+                if command == "":
+                    print("Invalid Command")
+                    display_instructions()
+                elif command[0] == "m" and command[1] == "e" : #Menu
                     break
-                elif command == "hide":
+                elif command[0] == "h" and command[1] == "i": #Hide
                     handle_hide()
-                elif command == "inventory":
+                elif command[0] == "i": #Inventory
                     display_inventory()
-                elif command == "time":
+                elif command[0] == "t" and command[1] == "i": #Time
                     display_time()
-                elif command == "health":
+                elif command[0] == "h" and command[1] == "e": #Health
                     display_health()
-                elif command == "map":
+                elif command[0] == "m" and command[1] == "a": #Map
                     map()
-                elif command == "fight":
+                elif command[0] == "f": #Fight
                     fight()
                 else:
                     handle_command(command)
@@ -490,6 +521,13 @@ def main_menu():
                     print(f"The zombies have overrun the school.\n{RED}Game Over!{NORMAL}")
                     reset_game()
                     break
+                #### Check for Win Condition
+                if current_location == "your_dorm":  # WIN CONDITION
+                    print(f"You Won!")
+                    display_time()
+                    reset_game()
+                    break
+                    
         elif choice == '3':
             save_game()
         elif choice == '4':
