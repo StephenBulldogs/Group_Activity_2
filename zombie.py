@@ -146,13 +146,23 @@ def reset_game():
         },
         "griggs_hall": {
             "description": "You've entered Griggs Hall. You think you hear a noise...",
-            "exits": {"back": "rdc_hallway"},
+            "exits": {"back": "rdc_hallway",  "forward": "dorm"},
             "items": [],
             "hide": "Nowhere to hide",
             "hide_result": 0,
             "map": "griggs.png",
             "safe": True,
             "zombie": ["giant"]
+        },        
+        "dorm": {
+            "description": "You have made it to your dorm, you can now hide out until the zombies are gone!",
+            "exits": {},
+            "items": [],
+            "hide": "",
+            "hide_result": 0,
+            "map": "griggs.png",
+            "safe": True,
+            "zombie": []
         },
         "kirby_student_center_floor_3": {
             "description": "You've entered Kirby Student Center floor 3. Behind you is either the RDC, or you can go down the stairs",
