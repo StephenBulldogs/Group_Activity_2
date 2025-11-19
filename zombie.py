@@ -290,7 +290,7 @@ def display_menu():
 
 #displays rules
 def display_instructions():
-    print("Commands: Go, Fight, Take, Inventory, Drop, Hide, Time, Health, Examine, Run, Menu, Map")
+    print("Commands: Go, Fight, Take, Inventory, Drop, Hide, Time, Health, Examine, Run, Menu, Map, Give")
     print("This game uses a Verb/Noun command system: go out, take knife, use knife, etc...")
     print("You have 30 minutes to get to safety. Changing locations, and hiding takes time so be careful not to take to long.")
 
@@ -375,7 +375,7 @@ def handle_command(command):
     verb = parts[0]
     noun = " ".join(parts[1:]) if len(parts) > 1 else ""
     #change locations with go command
-    if verb == "go":
+    if verb[0] == "g" and verb[1] == "o": #Go
         #check if zombie is in the way
         if locations[current_location]["zombie"]:
             zombies_in_location = locations[current_location]["zombie"]
@@ -396,7 +396,7 @@ def handle_command(command):
         else:
             print("You can't go that way.")
     #Take items
-    elif verb == "take":
+    elif verb[0] == "t" and verb[1] == "a": #Take
         #check if location has that item
         if noun in locations[current_location]["items"]:
             #add to inventory
@@ -408,7 +408,7 @@ def handle_command(command):
         else:
             print(f"There is no {noun} here.")
     #drop items
-    elif verb == "drop":
+    elif verb[0] == "d": #Drop
         #check if item is in inventory
         if noun in inventory:
             #remove item from inventory
@@ -420,7 +420,7 @@ def handle_command(command):
         else:
             print(f"You do not have a {noun}.")
     #examine items
-    elif verb == "examine":
+    elif verb[0] == "e": #Examine
         #check if you have item
         if noun in inventory:
             print(f"{items[noun]["examine"]}")
@@ -428,11 +428,23 @@ def handle_command(command):
         else:
             print(f"You do not have a {noun}.")
     #Run
-    elif verb == "run":
+    elif verb[0] == "r": #Run
         get_previous_location = current_location
         current_location = previous_location
         previous_location = get_previous_location
         add_time(30)
+    #Give
+    elif verb[0] == "g" and verb[1] == "i":
+        if current_location == "vet_center":
+            if noun == "backpack":
+                print("You give the student the backpack and he gives you a gun in exchange")
+                inventory.remove("backpack")
+                inventory.append("gun")
+            else:
+                print("Invalid Item.")
+        else:
+            print("You can't do that.")
+
     #command wasn't recognized
     else:
         print("Invalid command.")
@@ -468,20 +480,22 @@ def main_menu():
                 display_location()
                 #Handle Game Commands
                 command = input("> ").strip().lower()
-                if command == "menu":
+                if command[0] == "m" and command[1] == "e" : #Menu
                     break
-                elif command == "hide":
+                elif command[0] == "h" and command[1] == "i": #Hide
                     handle_hide()
-                elif command == "inventory":
+                elif command[0] == "i": #Inventory
                     display_inventory()
-                elif command == "time":
+                elif command[0] == "t" and command[1] == "i": #Time
                     display_time()
-                elif command == "health":
+                elif command[0] == "h" and command[1] == "e": #Health
                     display_health()
-                elif command == "map":
+                elif command[0] == "m" and command[1] == "a": #Map
                     map()
-                elif command == "fight":
+                elif command[0] == "f": #Fight
                     fight()
+                elif command == "":
+                    print("Invalid Command")
                 else:
                     handle_command(command)
                 #died
