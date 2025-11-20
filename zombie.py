@@ -441,10 +441,16 @@ def handle_command(command):
             print(f"You do not have a {noun}.")
     #Run
     elif verb[0] == "r": #Run
-        get_previous_location = current_location
-        current_location = previous_location
-        previous_location = get_previous_location
-        add_time(30)
+        if previous_location == current_location:
+            print(f"{BOLD}There is No Room to Run Back to!{NORMAL}")
+
+        else:
+            print(f"{BOLD}You run back to the previous room.{NORMAL}")
+            get_previous_location = current_location
+            current_location = previous_location
+            previous_location = get_previous_location
+            add_time(30)
+            
     #Give
     elif verb[0] == "g" and verb[1] == "i":
         if current_location == "vet_center":
