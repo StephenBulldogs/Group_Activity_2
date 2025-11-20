@@ -119,7 +119,7 @@ def load_game():
 #Reset Game (also Normal Mode)
 def reset_game():
     global health, locations, current_location, inventory, set_time, current_time, previous_location
-    health = 100
+    health = 100 # Health at 100 is currently the minimum for the game to be possible if played perfectly (We May want to change that)
     locations = {
         "residence_dining_center": {
             "description": "You hear a loud noise nearby...As you turn your head, you see zombies attacking other students!\nYou go to run towards an exit. At the doors you have the choice to hide or to go out?",
