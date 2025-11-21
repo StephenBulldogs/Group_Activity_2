@@ -72,7 +72,9 @@ zombies = {
 def save_game():
     global file_name, health, locations, current_location, inventory, current_time, previous_location
     verify = input("Are you sure you want to Save Game? (Yes or No): ").lower().strip()
-    if verify[0] == "y":
+    if verify == "":
+        print("Data not saved")
+    elif verify[0] == "y":
         #Convert Current Time to JSON acceptable string
         game_time = current_time.isoformat()
         #Converts all the needed data to one dictionary for JSON (easy to read)
@@ -96,7 +98,9 @@ def save_game():
 def load_game():
     global file_name, health, locations, current_location, inventory, current_time, previous_location, game_beaten
     verify = input("Are you sure you want to load game? (Yes or No): ").lower().strip()
-    if verify[0] == "y":
+    if verify == "":
+        print("Data not loaded")
+    elif verify[0] == "y":
         # Load the data from the file
         with open(file_name, "r") as f:
             loaded_data = json.load(f)
