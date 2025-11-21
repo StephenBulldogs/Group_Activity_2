@@ -501,12 +501,13 @@ def main_menu():
             display_instructions()
         #play game
         elif choice == '2':
-            if game_beaten == True:
+            if game_beaten == True and current_location==previous_location:
                 y_or_n = input("Would You Like To Play In Randomizer Mode?: ").strip().lower()
                 if y_or_n == "":
                     print("Starting Game In Normal Mode")
                 elif y_or_n[0] == "y":
                     print("Starting Game In Randomizer Mode")
+                    reset_game()
                     randomizer()
                 else:
                     print("Starting Game In Normal Mode")
