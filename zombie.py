@@ -7,6 +7,7 @@ Date:
 import datetime
 import cv2
 import json
+import random as rand
 
 #Console Styles for print
 BOLD = "\033[1m"
@@ -26,6 +27,7 @@ health = 0
 set_time = 0
 current_time = 0
 target_time = datetime.datetime.combine(today, datetime.time(17, 30))
+game_beaten = False
 items = {
     "backpack":{
         "description": "You see a backpack on the ground.",
@@ -81,6 +83,7 @@ def save_game():
             "current_time": game_time,
             "inventory": inventory,
             "locations": locations,
+            "completion": game_beaten
         }
         # Save the dictionary to a text file
         with open(file_name, "w") as f:
@@ -91,7 +94,7 @@ def save_game():
         print("Data not saved")
 
 def load_game():
-    global file_name, health, locations, current_location, inventory, current_time, previous_location
+    global file_name, health, locations, current_location, inventory, current_time, previous_location, game_beaten
     verify = input("Are you sure you want to load game? (Yes or No): ").lower().strip()
     if verify[0] == "y":
         # Load the data from the file
@@ -105,6 +108,7 @@ def load_game():
         game_time = loaded_data["current_time"]
         current_location = loaded_data["current_location"]
         previous_location = loaded_data["previous_location"]
+        game_beaten = loaded_data["completion"]
         #Convert the JSON acceptable string to DateTime format
         saved_time = datetime.datetime.fromisoformat(game_time)
         #Get today's date
@@ -153,7 +157,7 @@ def reset_game():
             "map": "griggs.png",
             "safe": True,
             "zombie": ["giant"]
-        },        
+        },
         "your_dorm": {
             "description": "You have made it to your dorm, you can now hide out until the zombies are gone!",
             "exits": {},
@@ -305,7 +309,7 @@ def display_instructions():
     print("This game uses a Verb/Noun command system: go out, take knife, use knife, etc...")
     print("You have 30 minutes to get to safety. Changing locations, and hiding takes time so be careful not to take to long.")
     print(f"{GREEN}------------------------------------------------------------------------{NORMAL}")
-    
+
 #displays time to player
 def display_time():
     global current_time
@@ -450,7 +454,7 @@ def handle_command(command):
             current_location = previous_location
             previous_location = get_previous_location
             add_time(30)
-            
+
     #Give
     elif verb[0] == "g" and verb[1] == "i":
         if current_location == "vet_center":
@@ -482,7 +486,7 @@ def handle_hide():
             locations[current_location]["safe"] = True
 
 def main_menu():
-    global health, current_time
+    global health, current_time, game_beaten
     #main menu loop
     while True:
         #display menu
@@ -493,6 +497,16 @@ def main_menu():
             display_instructions()
         #play game
         elif choice == '2':
+            if game_beaten == True:
+                y_or_n = input("Would You Like To Play In Randomizer Mode?: ").strip().lower()
+                if y_or_n == "":
+                    print("Starting Game In Normal Mode")
+                elif y_or_n[0] == "y":
+                    print("Starting Game In Randomizer Mode")
+                    randomizer()
+                else:
+                    print("Starting Game In Normal Mode")
+
             while True:
                 #prints location information
                 display_location()
@@ -532,10 +546,14 @@ def main_menu():
                 #### Check for Win Condition
                 if current_location == "your_dorm":  # WIN CONDITION
                     print(f"You Won!")
+                    if game_beaten == False:
+                        print("You Have Now Unlocked Randomizer Mode!")
+                        game_beaten = True
+
                     display_time()
                     reset_game()
                     break
-                    
+
         elif choice == '3':
             save_game()
         elif choice == '4':
@@ -557,6 +575,67 @@ def map():
     cv2.waitKey(0)
     # Close all OpenCV windows
     cv2.destroyAllWindows()
+
+def randomizer():
+    global locations, health
+    health = 150 # Give more leeway with health for randomizer mode
+    #all_loc = ["residence_dining_center", "rdc_hallway", "griggs_hall", "your_dorm", "kirby_student_center_floor_3", "kirby_student_center_floor_2", "kirby_student_center_floor_1", "scc_stairs", "math_department", "vet_center", "the_wedge"]
+    #end_loc = ["your_dorm", "residence_dining_center"]
+    #Randomize order of locations
+    location = ["rdc_hallway", "griggs_hall", "kirby_student_center_floor_3", "kirby_student_center_floor_2", "kirby_student_center_floor_1", "scc_stairs", "math_department", "the_wedge", "vet_center"]
+    location_rand = []
+    for i in range(len(location)):
+        random = rand.choice(location)
+        location_rand.append(random)
+        location.remove(random)
+   
+    #Remove existing Zombies
+    locations["kirby_student_center_floor_1"]["zombie"].remove("big")
+    locations["residence_dining_center"]["zombie"].remove("normal")
+    locations["residence_dining_center"]["zombie"].remove("normal")
+    
+    #Place Zombies in new random Locations
+    locations[location_rand[0]]["zombie"].append("big")
+    locations[location_rand[1]]["zombie"].append("normal")
+    locations[location_rand[2]]["zombie"].append("normal")
+    
+    #Remove existing items
+    locations["residence_dining_center"]["items"].remove("knife")
+    locations["rdc_hallway"]["items"].remove("backpack")
+    
+    #Place Items in new random locations
+    locations[location_rand[3]]["items"].append("backpack")
+
+        #Special Case for knife (needs to be before big zombie)
+    location_rand.append("residence_dining_center")
+    if location_rand[0] == "rdc_hallway":
+        locations["residence_dining_center"]["items"].append("knife")
+
+    elif location_rand[0] == "kirby_student_center_floor_3":
+        location_rand.remove("kirby_student_center_floor_2"),  location_rand.remove("kirby_student_center_floor_1"), location_rand.remove("scc_stairs"), location_rand.remove("math_department"), location_rand.remove("the_wedge"), location_rand.remove("vet_center")
+        locations[rand.choice(location_rand)]["items"].append("knife")
+
+    elif location_rand[0] =="kirby_student_center_floor_2":
+        location_rand.remove("kirby_student_center_floor_1"), location_rand.remove("scc_stairs"), location_rand.remove("math_department"), location_rand.remove("the_wedge"), location_rand.remove("vet_center")
+        locations[rand.choice(location_rand)]["items"].append("knife")
+
+    elif location_rand[0] == "kirby_student_center_floor_1":
+        location_rand.remove("scc_stairs"), location_rand.remove("math_department"), location_rand.remove("the_wedge"), location_rand.remove("vet_center")
+        locations[rand.choice(location_rand)]["items"].append("knife")
+
+    elif location_rand[0] == "scc_stairs":
+        location_rand.remove("math_department"), location_rand.remove("the_wedge"), location_rand.remove("vet_center")
+        locations[rand.choice(location_rand)]["items"].append("knife")
+
+    elif location_rand[0] == "math_department":
+        location_rand.remove("the_wedge"), location_rand.remove("vet_center")
+        locations[rand.choice(location_rand)]["items"].append("knife")
+
+    #location is already valid
+    else:
+        locations[rand.choice(location_rand)]["items"].append("knife")
+
+
 
 #resets all game variables/tables/tuples/arrays and starts main menu loop
 reset_game()
