@@ -216,10 +216,12 @@ def reset_game():
             "description": "You entered the Solon Campus Center math department. You can either take the stairs up towards Kirby, or go forward to the wedge ...\nbut you hear some people talking in the Veteran Center... do you want to go in?",
             "exits": {"up": "scc_stairs", "in": "vet_center", "forward": "the_wedge"},
             "items": [],
-            "hide": "Nowhere to hide",
-            "hide_result": 0,
+            "hide": "You hide in the bathrooms for 2 mins",
+            "hide_result": 120,
             "map": "math.png",
-            "safe": True,
+            "safe": False,
+            "safe_result": "As you attempt to leave, a zombie scratches you!",
+            "damage": 20,
             "zombie": []
         },
         "vet_center": {
@@ -534,8 +536,6 @@ def main_menu():
                     map()
                 elif command[0] == "f": #Fight
                     fight()
-                elif command == "": #Handle Empty Command
-                    print("Invalid command.")
                 else:
                     handle_command(command)
                 #died
@@ -550,7 +550,7 @@ def main_menu():
                     break
                 #### Check for Win Condition
                 if current_location == "your_dorm":  # WIN CONDITION
-                    print(f"You Won!")
+                    print(f"{GREEN}You have made it back to safety you win!\n\nyour arm itches where a zombie scratched you...\n\nTHE END!\n\n{NORMAL}")
                     if game_beaten == False:
                         print("You Have Now Unlocked Randomizer Mode!")
                         game_beaten = True
@@ -593,21 +593,21 @@ def randomizer():
         random = rand.choice(location)
         location_rand.append(random)
         location.remove(random)
-   
+
     #Remove existing Zombies
     locations["kirby_student_center_floor_1"]["zombie"].remove("big")
     locations["residence_dining_center"]["zombie"].remove("normal")
     locations["residence_dining_center"]["zombie"].remove("normal")
-    
+
     #Place Zombies in new random Locations
     locations[location_rand[0]]["zombie"].append("big")
     locations[location_rand[1]]["zombie"].append("normal")
     locations[location_rand[2]]["zombie"].append("normal")
-    
+
     #Remove existing items
     locations["residence_dining_center"]["items"].remove("knife")
     locations["rdc_hallway"]["items"].remove("backpack")
-    
+
     #Place Items in new random locations
     locations[location_rand[3]]["items"].append("backpack")
 
