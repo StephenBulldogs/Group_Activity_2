@@ -520,7 +520,7 @@ def main_menu():
                 display_location()
                 #Handle Game Commands
                 command = input("> ").strip().lower()
-                if command == "":
+                if len(command) <= 1:
                     print("Invalid Command")
                     display_instructions()
                 elif command[0] == "f": #Fight
