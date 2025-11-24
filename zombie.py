@@ -523,26 +523,22 @@ def main_menu():
                 if command == "":
                     print("Invalid Command")
                     display_instructions()
-                elif len(command) >= 1:
-                    if command[0] == "f": #Fight
-                        fight()
-                    elif command[0] == "i": #Inventory
-                        display_inventory()
-                    else:
-                        handle_command()
-                elif len(command) >= 2:
-                    if command[0] == "m" and command[1] == "e" : #Menu
-                        break
-                    elif command[0] == "h" and command[1] == "i": #Hide
-                        handle_hide()
-                    elif command[0] == "t" and command[1] == "i": #Time
-                        display_time()
-                    elif command[0] == "h" and command[1] == "e": #Health
-                        display_health()
-                    elif command[0] == "m" and command[1] == "a": #Map
-                        map()
-                    else:
-                        handle_command(command)
+                elif command[0] == "f": #Fight
+                    fight()
+                elif command[0] == "i": #Inventory
+                    display_inventory()
+                elif command[0] == "m" and command[1] == "e" : #Menu
+                    break
+                elif command[0] == "h" and command[1] == "i": #Hide
+                    handle_hide()
+                elif command[0] == "t" and command[1] == "i": #Time
+                    display_time()
+                elif command[0] == "h" and command[1] == "e": #Health
+                    display_health()
+                elif command[0] == "m" and command[1] == "a": #Map
+                    map()
+                else:
+                    handle_command(command)
                 #died
                 if health == 0:
                     print(f"You died\n{RED}Game Over!{NORMAL}")
