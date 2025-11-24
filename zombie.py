@@ -476,7 +476,6 @@ def handle_command(command):
     #command wasn't recognized
     else:
         print("Invalid command.")
-        display_instructions()
 #function for hide command
 def handle_hide():
     global health
@@ -498,7 +497,7 @@ def main_menu():
     while True:
         #display menu
         display_menu()
-        choice = input("Enter your choice (1-6): ")
+        choice = input("Enter your choice (1-5): ")
         #display rules
         if choice == '1':
             display_instructions()
@@ -546,12 +545,12 @@ def main_menu():
                     break
                 #took too long to get to safety
                 if current_time >= target_time:
-                    print(f"The zombies have overrun the school.\n{RED}Game Over!{NORMAL}")
+                    print(f"{BLUE}You feel strange... You vision goes blank as you turn into a zombie.\n{RED}Game Over!{NORMAL}")
                     reset_game()
                     break
                 #### Check for Win Condition
                 if current_location == "your_dorm":  # WIN CONDITION
-                    print(f"{GREEN}You have made it back to safety you win!\n\nyour arm itches where a zombie scratched you...\n\nTHE END!\n\n{NORMAL}")
+                    print(f"{GREEN}You have made it back to safety you win!\n\nYour arm itches where a zombie scratched you...\n\nTHE END!\n\n{NORMAL}")
                     if game_beaten == False:
                         print("You Have Now Unlocked Randomizer Mode!")
                         game_beaten = True
