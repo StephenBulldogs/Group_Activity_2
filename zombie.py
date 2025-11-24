@@ -476,6 +476,7 @@ def handle_command(command):
     #command wasn't recognized
     else:
         print("Invalid command.")
+        display_instructions()
 #function for hide command
 def handle_hide():
     global health
