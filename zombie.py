@@ -286,18 +286,18 @@ def display_inventory():
 
 #displays location information for player
 def display_location():
-    print(f"You are currently in {current_location.replace("_"," ").title()}")
+    print(f"You are currently in {GREEN}{current_location.replace("_"," ").title()}{NORMAL}")
     print(locations[current_location]["description"])
     if locations[current_location]["items"]:
         items_in_location = locations[current_location]["items"]
         for item_name in items_in_location:
-            print(items[item_name]["description"])
+            print(f"{GREEN}{items[item_name]["description"]}{NORMAL}")
     if locations[current_location]["safe"] == False:
         print("There are zombies nearby, though you think you can get around them without fighting.")
     if locations[current_location]["zombie"]:
         zombies_in_location = locations[current_location]["zombie"]
         for zombie_name in zombies_in_location:
-            print(f"{zombies[zombie_name]["description"]} Run or Fight")
+            print(f"{RED}{zombies[zombie_name]["description"]}{NORMAL} Run or Fight")
 
 #displays menu
 def display_menu():
@@ -403,7 +403,7 @@ def handle_command(command):
             zombies_in_location = locations[current_location]["zombie"]
             #display zombies blocking path
             for zombie_name in zombies_in_location:
-                print(zombies[zombie_name]["description"], "\nYou cannot leave")
+                print(zombies[zombie_name]["description"], f"\n{BOLD}You cannot leave{NORMAL}")
         #check to see that current location has that exit
         elif noun in locations[current_location]["exits"]:
             #check if location is unsafe, if not do damage
@@ -416,7 +416,7 @@ def handle_command(command):
             add_time(30)
         #Current location doesnt have that exit
         else:
-            print("You can't go that way.")
+            print(f"{BOLD}You can't go that way.{NORMAL}")
     #Take items
     elif verb[0] == "t" and verb[1] == "a": #Take
         #check if location has that item
@@ -425,10 +425,10 @@ def handle_command(command):
             inventory.append(noun)
             #remove from location
             locations[current_location]["items"].remove(noun)
-            print(f"You took the {noun}.")
+            print(f"{BOLD}You took the {noun}.{NORMAL}")
         #location does not have item
         else:
-            print(f"There is no {noun} here.")
+            print(f"{BOLD}There is no {noun} here.{NORMAL}")
     #drop items
     elif verb[0] == "d": #Drop
         #check if item is in inventory
@@ -437,18 +437,18 @@ def handle_command(command):
             inventory.remove(noun)
             #add item to location
             locations[current_location]["items"].append(noun)
-            print(f"You dropped the {noun}.")
+            print(f"{BOLD}You dropped the {noun}.{NORMAL}")
         #you do not have item
         else:
-            print(f"You do not have a {noun}.")
+            print(f"{BOLD}You do not have a {noun}.{NORMAL}")
     #examine items
     elif verb[0] == "e": #Examine
         #check if you have item
         if noun in inventory:
-            print(f"{items[noun]["examine"]}")
+            print(f"{BOLD}{items[noun]["examine"]}{NORMAL}")
         #you do not have item
         else:
-            print(f"You do not have a {noun}.")
+            print(f"{BOLD}You do not have a {noun}.{NORMAL}")
     #Run
     elif verb[0] == "r": #Run
         if previous_location == current_location:
@@ -465,13 +465,13 @@ def handle_command(command):
     elif verb[0] == "g" and verb[1] == "i":
         if current_location == "vet_center":
             if noun == "backpack":
-                print("You give the student the backpack and he gives you a gun in exchange")
+                print(f"{BOLD}You give the student the backpack and he gives you a gun in exchange{NORMAL}")
                 inventory.remove("backpack")
                 inventory.append("gun")
             else:
-                print("Invalid Item.")
+                print(f"{BOLD}Invalid Item.{NORMAL}")
         else:
-            print("You can't do that.")
+            print(f"{BOLD}You can't do that.{NORMAL}")
 
     #command wasn't recognized
     else:
@@ -552,7 +552,7 @@ def main_menu():
                 #### Check for Win Condition
                 if current_location == "your_dorm":  # WIN CONDITION
                     print(f"{GREEN}You have made it back to safety you win!\n\nYour arm itches where a zombie scratched you...\n\nTHE END!\n\n{NORMAL}")
-                    if game_beaten == False:
+                    if not game_beaten:
                         print("You Have Now Unlocked Randomizer Mode!")
                         game_beaten = True
 
@@ -587,7 +587,7 @@ def randomizer():
     health = 150 # Give more leeway with health for randomizer mode
     #all_loc = ["residence_dining_center", "rdc_hallway", "griggs_hall", "your_dorm", "kirby_student_center_floor_3", "kirby_student_center_floor_2", "kirby_student_center_floor_1", "scc_stairs", "math_department", "vet_center", "the_wedge"]
     #end_loc = ["your_dorm", "residence_dining_center"]
-    #Randomize order of locations
+    #Randomize order of valid randomizer locations
     location = ["rdc_hallway", "griggs_hall", "kirby_student_center_floor_3", "kirby_student_center_floor_2", "kirby_student_center_floor_1", "scc_stairs", "math_department", "the_wedge", "vet_center"]
     location_rand = []
     for i in range(len(location)):
