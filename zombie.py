@@ -153,7 +153,7 @@ def reset_game():
             "zombie": []
         },
         "griggs_hall": {
-            "description": "You've entered Griggs Hall. You think you hear a noise...",
+            "description": "You've entered Griggs Hall, You think you hear a noise...",
             "exits": {"back": "rdc_hallway",  "forward": "your_dorm"},
             "items": [],
             "hide": "Nowhere to hide",
@@ -286,6 +286,13 @@ def display_inventory():
 
 #displays location information for player
 def display_location():
+    #Change Griggs Hall Description Based On Big Zombie Presence
+    if current_location == "griggs_hall" and locations[current_location]["zombie"] == []:
+        locations[current_location]["description"] = "You can go forward to your dorm or back to hallway."
+    elif current_location == "griggs_hall" and locations[current_location]["zombie"] != []:
+        locations[current_location]["description"] = "You've entered Griggs Hall, You think you hear a noise..."
+
+    #Display Location Function
     print(f"You are currently in {GREEN}{current_location.replace("_"," ").title()}{NORMAL}")
     print(locations[current_location]["description"])
     if locations[current_location]["items"]:
