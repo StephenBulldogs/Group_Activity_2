@@ -471,7 +471,7 @@ def handle_command(command):
     #Give
     elif verb[0] == "g" and verb[1] == "i":
         if current_location == "vet_center":
-            if noun == "backpack":
+            if noun == "backpack" and "backpack" in inventory:
                 print(f"{BOLD}You give the student the backpack and he gives you a gun in exchange{NORMAL}")
                 inventory.remove("backpack")
                 inventory.append("gun")
